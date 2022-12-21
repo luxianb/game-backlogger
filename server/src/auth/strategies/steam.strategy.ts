@@ -8,7 +8,7 @@ const port = process.env.PORT ?? 3001;
 export class SteamStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      returnURL: `http://localhost:${port}/auth/steam/return`,
+      returnURL: `http://localhost:${port}/api/auth/steam/return`,
       realm: `http://localhost:3001/`,
       apiKey: process.env.STEAM_API_KEY,
     });

@@ -3,9 +3,10 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('users', (table) => {
     table.increments('id');
-    table.string('username').notNullable();
+    table.string('username').notNullable().unique();
     table.string('email').notNullable();
     table.string('password').notNullable();
+    table.string('steamId').notNullable();
     table.timestamps(true, true, true);
   });
 }

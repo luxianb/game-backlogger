@@ -3,7 +3,6 @@ import {
   Get,
   Logger,
   Post,
-  Redirect,
   Request,
   Session,
   UseGuards,
@@ -17,11 +16,6 @@ import { SteamAuthGuard } from './auth/guards/steam-auth.guard';
 @Controller()
 export class AppController {
   constructor(private readonly authService: AuthService) {}
-
-  @Get('profile')
-  getSessionInfo(@Session() session) {
-    return session.user;
-  }
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
@@ -43,8 +37,8 @@ export class AppController {
 
   @UseGuards(SteamAuthGuard)
   @Get('auth/steam/return')
-  async getSteamId(@Request() req, @Response() res) {
-    req.session.steam = req.user;
-    return res.redirect('http://localhost:3000');
+  async getSteamId(@Request() req, @Response() res, @Session() session) {
+    session.steam = req.user;
+    return res.redirect(req.session.redirect || 'http://localhost:3000');
   }
 }

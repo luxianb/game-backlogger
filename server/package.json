@@ -23,6 +23,7 @@
     "seed": "knex seed:run"
   },
   "dependencies": {
+    "@nestjs/axios": "^1.0.1",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^8.0.0",

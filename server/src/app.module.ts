@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { HttpModule } from '@nestjs/axios';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,12 +11,14 @@ import { KnexModule } from './knex';
 import config from '../knexfile';
 import configuration from './config/configuration';
 import { SteamModule } from './steam/steam.module';
+import { SessionsController } from './sessions.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
     }),
+    HttpModule,
     KnexModule.register(config.development),
     UsersModule,
     AuthModule,
@@ -25,7 +28,7 @@ import { SteamModule } from './steam/steam.module';
       signOptions: { expiresIn: '60s' },
     }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, SessionsController],
   providers: [AppService],
 })
 export class AppModule {}

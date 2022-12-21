@@ -1,8 +1,7 @@
-// src/app.service.ts
 import { Inject, Injectable } from '@nestjs/common';
 import { KNEX_CONNECTION } from '../knex';
 import { User } from './users.interface';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
