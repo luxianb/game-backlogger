@@ -8,11 +8,14 @@ export function hexToRGBA(hex, alpha) {
 }
 
 export function checkUrl(url) {
-  let request = new XMLHttpRequest();
-  request.open("GET", url, true);
-  request.send();
-  if (request.status === 200) {
-    return true;
+  try {
+    let request = new XMLHttpRequest();
+    request.open("GET", url, false);
+    request.send();
+    if (request.status === 200) {
+      return true;
+    }
+  } catch (err) {
+    return false;
   }
-  return false;
 }

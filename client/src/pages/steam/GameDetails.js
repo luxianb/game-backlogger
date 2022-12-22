@@ -18,6 +18,9 @@ export const GameDetailsPage = () => {
   const [achievements] = useGameAchievements(steamId, params?.appid);
   const containerRef = useRef();
   const [containerHeight, setContainerHeight] = useState(null);
+  const heroBannerUrl = getGameHeroBanner(params?.appid);
+  console.log("🚀  heroBannerUrl", heroBannerUrl);
+  const boxartUrl = getGameBoxart(params?.appid);
   // console.log("🚀  achievement", achievements);
   console.log("🚀  gameData", game);
 
@@ -59,11 +62,21 @@ export const GameDetailsPage = () => {
     <Page>
       <Navbar />
 
-      <img
-        src={getGameHeroBanner(params?.appid) || game?.background}
-        alt="hero-banner"
-        style={{ filter: `brightness(.3)` }}
-      />
+      {heroBannerUrl ? (
+        <img
+          src={getGameHeroBanner(params?.appid)}
+          alt="hero-banner"
+          style={{ filter: `brightness(.3)` }}
+        />
+      ) : (
+        <div
+          style={{
+            height: `30.967vw`,
+            width: "100vw",
+            backgroundColor: "blue",
+          }}
+        ></div>
+      )}
       <Row
         style={{
           transform: `translateY(-75%)`,
@@ -73,16 +86,27 @@ export const GameDetailsPage = () => {
         }}
         ref={containerRef}
       >
-        <img
-          src={getGameBoxart(params?.appid)}
-          alt="box-art"
-          width={250}
-          style={{
-            boxShadow: `0 0 6px rgba(0,0,0,.1)`,
-            position: "relative",
-            borderRadius: 8,
-          }}
-        />
+        {boxartUrl ? (
+          <img
+            src={getGameBoxart(params?.appid)}
+            alt="box-art"
+            width={250}
+            style={{
+              boxShadow: `0 0 6px rgba(0,0,0,.1)`,
+              borderRadius: 8,
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              height: 375,
+              width: 250,
+              backgroundColor: "blue",
+              boxShadow: `0 0 6px rgba(0,0,0,.1)`,
+              borderRadius: 8,
+            }}
+          ></div>
+        )}
         <Col style={{ gap: ".5rem" }}>
           {game?.name && <h1 style={{ color: "white" }}>{game?.name}</h1>}
           <div
