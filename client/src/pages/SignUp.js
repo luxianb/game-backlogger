@@ -24,7 +24,7 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm();
   const [steamInfo, setSteamInfo] = useState(null);
-  const [modal, setModal] = useState(null);
+  // const [modal, setModal] = useState(null);
 
   useEffect(() => {
     handleSteamFetch();

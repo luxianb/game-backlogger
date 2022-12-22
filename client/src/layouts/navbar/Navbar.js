@@ -4,11 +4,17 @@ import { Link } from "react-router-dom";
 import { Button } from "../../components/common";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
+import { logoutUser } from "../../utils/apis/user.apis";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const authenticated = useStore((state) => state.access_token);
   const removeToken = useStore((state) => state.removeToken);
+
+  const handleLogout = async () => {
+    await logoutUser();
+    removeToken();
+  };
 
   return (
     <Container>
@@ -17,7 +23,7 @@ const Navbar = () => {
       <NavContainer direction="right">
         {authenticated ? (
           <>
-            <Button label="Log Out" onClick={() => removeToken()} />
+            <Button label="Log Out" onClick={handleLogout} />
           </>
         ) : (
           <>

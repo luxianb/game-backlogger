@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { KNEX_CONNECTION } from 'src/knex';
 import { HttpService } from '@nestjs/axios';
+import { map, lastValueFrom } from 'rxjs';
 
 const key = process.env.STEAM_API_KEY;
 
@@ -45,41 +46,28 @@ export class SteamService {
       .then((res) => res.data?.response?.players[0]);
     return data;
   }
-  // async getOwnedGames(
-  //   steamid: string,
-  //   // include_played_free_games = true,
-  //   include_appinfo = 1,
-  //   // format = 'json',
-  // ): Promise<any> {
-  //   const url = `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`;
-  //   const params = {
-  //     key,
-  //     steamid,
-  //     // include_played_free_games,
-  //     // format,
-  //     include_appinfo,
-  //   };
 
-  //   const res = await axios.get(url, { params }).then((res) => {
-  //     return res?.data?.response;
-  //   });
-  //   Logger.log(res);
-  //   return {};
-  // }
   async getOwnedGames(
     steamid: string,
-    // include_played_free_games = true,
-    include_appinfo = 1,
-    // format = 'json',
+    include_played_free_games = true,
+    include_appinfo = true,
   ): Promise<any> {
-    let url = `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`;
-    url += `?key=${key}`;
-    url += `&steamid=${steamid}`;
-    // if (format) url += `&format=${format}`;
-    // if (include_played_free_games) url += `&include_played_free_games=${include_played_free_games}`;
-    // if (include_appinfo) url += `&include_appinfo=${include_appinfo}`;
+    const url = `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`;
+    const params = {
+      key,
+      steamid,
+      include_played_free_games,
+      include_appinfo,
+    };
 
-    return this.httpService.get(url);
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(
+        map((res) => {
+          return res.data.response;
+        }),
+      ),
+    );
+    return data;
   }
   async getRecentlyPlayedGames(steamid: string, count?: number): Promise<any> {
     const url = `http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/`;
@@ -90,33 +78,57 @@ export class SteamService {
       .get(url, { params })
       .then((res) => res.data?.response);
 
-    if (data.games.length) {
-      data.games = data.games.map((item) => ({
-        ...item,
-        img_icon_url:
-          item.img_icon_url &&
-          `http://media.steampowered.com/steamcommunity/public/images/apps/${item?.appid}/${item?.img_icon_url}.jpg`,
-      }));
-    }
     return data;
   }
   async getUserStatsForGame(steamid: string, appid: string): Promise<any> {
     const url = `http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/`;
-    const params = { appid, key, steamid };
-    const data = await axios.get(url, { params }).then((res) => res.data);
+    const params = { key, appid, steamid, l: 'english' };
+    const data = await lastValueFrom(
+      this.httpService
+        .get(url, { params })
+        .pipe(map((res) => res.data?.playerstats?.achievements)),
+    );
 
     return data;
   }
   async getPlayerAchievements(steamid: string, appid: string): Promise<any> {
     const url = `http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/`;
-    const params = { appid, key, steamid };
-    const data = await axios.get(url, { params }).then((res) => res.data);
+    const params = { appid, key, steamid, l: 'english' };
+    const data = await lastValueFrom(
+      this.httpService
+        .get(url, { params })
+        .pipe(map((res) => res.data?.playerstats?.achievements)),
+    );
     return data;
   }
   async getGlobalAchievementPercentagesForApp(gameid: string): Promise<any> {
     const url = `http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/`;
     const params = { gameid };
     const data = await axios.get(url, { params }).then((res) => res.data);
+    return data;
+  }
+  async getGlobalStatsForGame(appid: string): Promise<any> {
+    const url = `http://api.steampowered.com/ISteamUserStats/GetGlobalStatsForGame/v1/`;
+    const params = { appid };
+    const data = await axios.get(url, { params }).then((res) => res.data);
+    return data;
+  }
+  async getNumberOfCurrentPlayers(appid: string): Promise<any> {
+    const url = `http://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/`;
+    const params = { appid };
+    const data = await axios.get(url, { params }).then((res) => res.data);
+    return data;
+  }
+  async getSchemaForGame(appid: string): Promise<any> {
+    const url = `http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/`;
+    const params = { key, appid, l: 'english' };
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(
+        map((res) => {
+          return res.data?.game;
+        }),
+      ),
+    );
     return data;
   }
   async getNewsForApp(appid: string, count = 3, maxlength = 300): Promise<any> {

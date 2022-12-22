@@ -6,3 +6,13 @@ export function hexToRGBA(hex, alpha) {
   if (alpha) return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   return `rgb(${r}, ${g}, ${b})`;
 }
+
+export function checkUrl(url) {
+  let request = new XMLHttpRequest();
+  request.open("GET", url, true);
+  request.send();
+  if (request.status === 200) {
+    return true;
+  }
+  return false;
+}

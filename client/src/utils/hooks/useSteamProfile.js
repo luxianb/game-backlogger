@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { fetchSteamProfile } from "../apis/steam.apis";
 
 export const useSteamProfile = (steamId) => {
-  const [profile, setProfile] = useState([]);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     if (steamId) {
       getUserSteamProfile(steamId);
     } else {
-      setProfile([]);
+      setProfile(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [steamId]);

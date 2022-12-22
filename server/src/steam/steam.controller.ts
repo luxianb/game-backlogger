@@ -19,7 +19,7 @@ export class SteamController {
 
   @Post('return')
   async setSteamReturnLink(@Session() session, @Body() body) {
-    Logger.debug(body);
+    // Logger.debug(body);
     session.redirect = body.link;
     return { success: true };
   }
@@ -32,7 +32,7 @@ export class SteamController {
   @Get('profile/:id/gamelist')
   async getUserGameList(@Param('id') id) {
     const data = await this.steamService.getOwnedGames(id);
-    Logger.log(data);
+    // Logger.log(data);
     return data;
   }
   @Get('profile/:id/recent')
@@ -43,6 +43,11 @@ export class SteamController {
   @Get('profile/:id/stat/:appId')
   async getUserGameStat(@Param('id') id, @Param('appId') appId) {
     const data = await this.steamService.getUserStatsForGame(id, appId);
+    return data;
+  }
+  @Get('profile/:id/achievements/:appId')
+  async getUserGameAchievements(@Param('id') id, @Param('appId') appId) {
+    const data = await this.steamService.getPlayerAchievements(id, appId);
     return data;
   }
   @Get('profile/:id/friends')
@@ -65,6 +70,11 @@ export class SteamController {
     const data = await this.steamService.getGlobalAchievementPercentagesForApp(
       appId,
     );
+    return data;
+  }
+  @Get('game/schema/:appId')
+  async getSchemaForGame(@Param('appId') appId) {
+    const data = await this.steamService.getSchemaForGame(appId);
     return data;
   }
   @Get('game/news/:appId')

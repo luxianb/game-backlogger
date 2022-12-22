@@ -1,7 +1,14 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Page, Input, Label, Button, Row } from "../components/common";
+import {
+  Page,
+  Input,
+  Label,
+  Button,
+  Row,
+  ErrorPrompt,
+} from "../components/common";
 import Navbar from "../layouts/navbar/Navbar";
 import { authUser } from "../utils/apis/user.apis";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +46,7 @@ export const LogInPage = () => {
             <Input {...register("password")} type="password" />
           </span>
         </Row>
+        {error && <ErrorPrompt>{error}</ErrorPrompt>}
         <Button label="Login" type="submit" />
       </Form>
     </Page>
