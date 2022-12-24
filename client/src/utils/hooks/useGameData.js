@@ -1,21 +1,13 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchSteamGameInfo } from "../apis/steam.apis";
 
+const KEY = "GAME_DETAIL";
+
 export const useGameData = (appid) => {
-  const [game, setGame] = useState(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: [KEY, appid],
+    queryFn: () => fetchSteamGameInfo(appid),
+  });
 
-  useEffect(() => {
-    if (appid) {
-      getGameData(appid);
-    } else {
-      setGame(null);
-    }
-  }, [appid]);
-
-  const getGameData = async (appid) => {
-    const data = await fetchSteamGameInfo(appid);
-    setGame(data);
-  };
-
-  return [game, setGame];
+  return [data, { isLoading, error }];
 };

@@ -3,7 +3,6 @@ import { instance } from "./api.tools";
 export const fetchSteamProfile = (steamId) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log("🚀  steamId", steamId);
       const data = await instance
         .get(`/api/steam/profile/${steamId}`)
         .then((res) => res.data);

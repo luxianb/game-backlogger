@@ -14,10 +14,9 @@ import { useState } from "react";
 dayjs.extend(advancedFormat);
 
 export const ProfilePage = () => {
-  const steamId = useSteamId();
-  const [recentGames] = useRecentGames(steamId);
+  const [steamId] = useSteamId();
+  const [recentGames, { isLoading }] = useRecentGames(steamId);
   const [gameList] = useUserGamelist(steamId);
-  console.log("🚀  gameList", gameList);
   const [profile] = useSteamProfile(steamId);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortCriteria, setSortCriteria] = useState("NAME");
@@ -40,7 +39,7 @@ export const ProfilePage = () => {
   };
 
   const renderRecentGames = () => {
-    if (!recentGames.length) return null;
+    if (isLoading || !recentGames.length) return null;
 
     const content = () =>
       recentGames.map((game) => (

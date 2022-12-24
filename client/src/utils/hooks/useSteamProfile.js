@@ -1,22 +1,13 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchSteamProfile } from "../apis/steam.apis";
 
+const KEY = "STEAM_PROFILE";
+
 export const useSteamProfile = (steamId) => {
-  const [profile, setProfile] = useState(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: [KEY, steamId],
+    queryFn: () => fetchSteamProfile(steamId),
+  });
 
-  useEffect(() => {
-    if (steamId) {
-      getUserSteamProfile(steamId);
-    } else {
-      setProfile(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [steamId]);
-
-  const getUserSteamProfile = async (steamId) => {
-    const data = await fetchSteamProfile(steamId);
-    setProfile(data);
-  };
-
-  return [profile, setProfile];
+  return [data, { isLoading, error }];
 };

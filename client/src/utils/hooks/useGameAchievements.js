@@ -1,44 +1,37 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { async } from "q";
 import {
   fetchSteamGameAchievements,
   getSchemaForGame,
 } from "../apis/steam.apis";
 
+const KEY = "GAME_ACHIEVEMENT";
+const SCHEMA_KEY = "GAME_SCHEMA";
+
 export const useGameAchievements = (steamid, appid) => {
-  const [achievements, setAchievements] = useState([]);
-  const [schema, setSchema] = useState(null);
+  const {
+    data: achievements,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: [KEY, appid],
+    queryFn: () => {
+      console.log("🚀  appid", appid);
+      console.log("🚀  steamid", steamid);
+      if (!steamid || !appid) return [];
+      return fetchSteamGameAchievements(steamid, appid);
+    },
+  });
+  const {
+    data: schema,
+    isLoading: isLoadingSchema,
+    error: schemaError,
+  } = useQuery({
+    queryKey: [SCHEMA_KEY, appid],
+    queryFn: () => getSchemaForGame(appid),
+  });
 
-  useEffect(() => {
-    if (appid) {
-      getSchema(appid);
-    } else {
-      setSchema(null);
-    }
-  }, [appid]);
-
-  useEffect(() => {
-    if (steamid && appid) {
-      getAchievements(steamid, appid);
-    } else {
-      setAchievements([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [steamid, appid, schema]);
-
-  const getSchema = async (appid) => {
-    const data = await getSchemaForGame(appid);
-    setSchema(data);
-  };
-
-  const getAchievements = async (steamid, appid) => {
-    let data = await fetchSteamGameAchievements(steamid, appid);
-    if (schema) {
-      data = populateAchievement(data);
-      setAchievements(data);
-    }
-  };
-
-  const populateAchievement = (achievements) => {
+  const populateAchievement = (achievements, schema) => {
     return achievements.map((item) => {
       const schemaInfo = schema.availableGameStats.achievements.find(
         (e) => e.name === item.apiname
@@ -48,5 +41,10 @@ export const useGameAchievements = (steamid, appid) => {
     });
   };
 
-  return [achievements, setAchievements];
+  const data =
+    !isLoading && !isLoadingSchema
+      ? populateAchievement(achievements, schema)
+      : [];
+
+  return [data, { isLoading, error }];
 };

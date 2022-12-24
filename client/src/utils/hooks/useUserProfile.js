@@ -1,18 +1,13 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { getUserProfile } from "../apis/user.apis";
 
-export const useUserProfile = () => {
-  // const authToken = useStore((state) => state.access_token);
-  const [profile, setProfile] = useState(null);
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
+const KEY = "USER_PROFILE";
 
-  const fetchUserProfile = async () => {
-    const data = await getUserProfile();
-    console.log("🚀  data", data);
-    setProfile(data);
-  };
+export const useUserProfile = (steamId) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: [KEY, steamId],
+    queryFn: () => getUserProfile(),
+  });
 
-  return [profile, setProfile];
+  return [data, { isLoading, error }];
 };

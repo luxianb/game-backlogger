@@ -12,7 +12,7 @@ import { useGameAchievements } from "../../utils/hooks/useGameAchievements";
 export const GameDetailsPage = () => {
   const params = useParams();
   const [game] = useGameData(params?.appid);
-  const steamId = useSteamId();
+  const [steamId] = useSteamId();
   const [achievements] = useGameAchievements(steamId, params?.appid);
   const containerRef = useRef();
   const [favAchievements] = useFavAchievements(params?.appid);

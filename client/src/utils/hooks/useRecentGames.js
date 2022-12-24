@@ -1,22 +1,17 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchRecentSteamGames } from "../apis/steam.apis";
 
+const KEY = "RECENT_GAMES";
+
 export const useRecentGames = (steamId) => {
-  const [recentGames, setRecentGames] = useState([]);
-  useEffect(() => {
-    if (steamId) {
-      getRecentGames(steamId);
-    } else {
-      setRecentGames([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [steamId]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: [KEY, steamId],
+    queryFn: async () => {
+      if (!steamId) return [];
+      const data = await fetchRecentSteamGames(steamId);
+      return data.games;
+    },
+  });
 
-  const getRecentGames = async (steamId) => {
-    const data = await fetchRecentSteamGames(steamId);
-    // console.log("🚀  recentGames", recentGames);
-    setRecentGames(data.games);
-  };
-
-  return [recentGames, setRecentGames];
+  return [data, { isLoading, error }];
 };

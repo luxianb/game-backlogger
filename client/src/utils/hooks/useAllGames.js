@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchAllSteamGames } from "../apis/steam.apis";
 
+const KEY = "ALL_GAMES";
+
 export const useAllGames = () => {
-  const [games, setGames] = useState([]);
-  useEffect(() => {
-    getRecentGames();
-  }, []);
+  const { data, isLoading, error } = useQuery({
+    queryKey: [KEY],
+    queryFn: () => fetchAllSteamGames(),
+  });
 
-  const getRecentGames = async () => {
-    const data = await fetchAllSteamGames();
-    setGames(data);
-  };
-
-  return games;
+  return [data, { isLoading, error }];
 };
