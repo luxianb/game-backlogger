@@ -9,7 +9,6 @@ import {
   Row,
   ErrorPrompt,
 } from "../components/common";
-import Navbar from "../layouts/navbar/Navbar";
 import { authUser } from "../utils/apis/user.apis";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../store";

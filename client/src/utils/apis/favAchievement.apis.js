@@ -18,7 +18,6 @@ export const getFavAchievements = (appid) =>
     try {
       let url = "/api/favAchievements";
       if (appid) url += `/${appid}`;
-      console.log("🚀  url", url);
       const data = await axios.get(url).then((res) => res.data);
 
       resolve(data);

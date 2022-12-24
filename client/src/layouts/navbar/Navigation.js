@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Home, GameController, Person } from "akar-icons";
 import { BiAward, BiLogIn, BiLogOut } from "react-icons/bi";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useStore } from "../../store";
 import { logoutUser } from "../../utils/apis/user.apis";
@@ -72,7 +72,6 @@ const Container = styled.nav`
   border-radius: 16px;
   background-color: #292f3b;
 `;
-const StyledLink = styled(Link)``;
 
 function getActiveStyle({ active }) {
   if (active)

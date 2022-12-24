@@ -1,26 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import {
   getFavAchievements,
   toggleAchievementFav,
 } from "../apis/favAchievement.apis";
+import { v4 as uuidv4 } from "uuid";
 
 const KEY = "FAV_ACHIEVEMENT";
-
-// export const useFavAchievements = (appid) => {
-//   const [achievements, setAchievements] = useState([]);
-
-//   useEffect(() => {
-//     fetchAchievements(appid);
-//   }, [appid]);
-
-//   const fetchAchievements = async (appid) => {
-//     const data = await getFavAchievements(appid);
-//     setAchievements(data);
-//   };
-
-//   return achievements;
-// };
 
 export const useFavAchievements = (appid) => {
   const { data, isLoading, error } = useQuery({
@@ -37,19 +22,44 @@ export const useToggleFavAchievement = () => {
     mutationFn: toggleAchievementFav,
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: [KEY] });
-      // A mutation is about to happen!
-      // Optionally return a context containing data to use when for example rolling back
-      // return { id: 1 };
+
+      // Create optimistic todo
+      const optimisticData = { id: uuidv4(), ...variables };
+
+      // Add optimistic todo to todos list
+      queryClient.setQueryData([KEY, variables.gameid], (old) => {
+        const achievementExists = old.find(
+          (item) =>
+            item.gameid === variables.gameid &&
+            item.achievementid === variables.achievementid
+        );
+        if (achievementExists) {
+          return old.filter(
+            (item) => item.achievementid !== variables.achievementid
+          );
+        } else {
+          return [...old, optimisticData];
+        }
+      });
+
+      // Return context with the optimistic todo
+      return { optimisticData };
     },
     onError: (error, variables, context) => {
-      // An error happened!
+      queryClient.setQueryData([KEY, variables.gameid], (old) =>
+        old.filter((item) => item.id !== context.optimisticData.id)
+      );
     },
-    onSuccess: (data, variables, context) => {
-      // Boom baby!
-      queryClient.invalidateQueries({ queryKey: [KEY] });
+    onSuccess: (result, variables, context) => {
+      queryClient.setQueryData([KEY, variables.gameid], (old) =>
+        old.map((item) =>
+          item.id === context.optimisticData.id ? result : item
+        )
+      );
     },
     onSettled: (data, error, variables, context) => {
       // Error or success... doesn't matter!
     },
+    retry: 3,
   });
 };

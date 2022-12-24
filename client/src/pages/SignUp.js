@@ -11,7 +11,6 @@ import {
   SteamButton,
   ErrorPrompt,
 } from "../components/common";
-import Navbar from "../layouts/navbar/Navbar";
 import { SteamUserDisplay } from "../components/steam";
 import { createUser } from "../utils/apis/user.apis";
 import { fetchSteamProfileFromSession } from "../utils/steamTools";

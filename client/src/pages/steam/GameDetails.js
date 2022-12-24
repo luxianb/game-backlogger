@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Page, Row } from "../../components/common";
@@ -7,10 +6,7 @@ import { AchievementItem } from "../../components/steam/AchievementItem";
 import { BoxArt } from "../../components/steam/BoxArt";
 import { HeroBanner } from "../../components/steam/HeroBanner";
 import { useGameData, useSteamId } from "../../utils/hooks";
-import {
-  useFavAchievements,
-  useToggleFavAchievement,
-} from "../../utils/hooks/useFavAchievements";
+import { useFavAchievements } from "../../utils/hooks/useFavAchievements";
 import { useGameAchievements } from "../../utils/hooks/useGameAchievements";
 
 export const GameDetailsPage = () => {
@@ -20,7 +16,6 @@ export const GameDetailsPage = () => {
   const [achievements] = useGameAchievements(steamId, params?.appid);
   const containerRef = useRef();
   const [favAchievements] = useFavAchievements(params?.appid);
-  console.log("🚀  favAchievements", favAchievements);
   const [containerHeight, setContainerHeight] = useState(null);
 
   useEffect(() => {
