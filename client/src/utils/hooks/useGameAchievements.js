@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { async } from "q";
 import {
   fetchSteamGameAchievements,
   getSchemaForGame,
@@ -14,10 +13,8 @@ export const useGameAchievements = (steamid, appid) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: [KEY, appid],
+    queryKey: [KEY, `${steamid}-${appid}`],
     queryFn: () => {
-      console.log("🚀  appid", appid);
-      console.log("🚀  steamid", steamid);
       if (!steamid || !appid) return [];
       return fetchSteamGameAchievements(steamid, appid);
     },
@@ -27,7 +24,7 @@ export const useGameAchievements = (steamid, appid) => {
     isLoading: isLoadingSchema,
     error: schemaError,
   } = useQuery({
-    queryKey: [SCHEMA_KEY, appid],
+    queryKey: [SCHEMA_KEY, `${steamid}-${appid}`],
     queryFn: () => getSchemaForGame(appid),
   });
 
