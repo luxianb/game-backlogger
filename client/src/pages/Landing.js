@@ -1,10 +1,5 @@
-import Navbar from "../layouts/navbar/Navbar";
+import { Page } from "../components/common";
 
-const LandingPage = () => (
-  <div>
-    <Navbar />
-    LandingPage
-  </div>
-);
+const LandingPage = () => <Page>LandingPage</Page>;
 
 export default LandingPage;

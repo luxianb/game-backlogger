@@ -1,5 +1,4 @@
 import { Col, Page, Row } from "../components/common";
-import Navbar from "../layouts/navbar/Navbar";
 import { Link } from "react-router-dom";
 import { useRecentGames } from "../utils/hooks/useRecentGames";
 import { useSteamId } from "../utils/hooks/useSteamId";
@@ -18,6 +17,7 @@ export const ProfilePage = () => {
   const steamId = useSteamId();
   const [recentGames] = useRecentGames(steamId);
   const [gameList] = useUserGamelist(steamId);
+  console.log("🚀  gameList", gameList);
   const [profile] = useSteamProfile(steamId);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortCriteria, setSortCriteria] = useState("NAME");
@@ -30,15 +30,8 @@ export const ProfilePage = () => {
         <Col>
           <h2>{profile.personaname}</h2>
           <p>
-            Created: {dayjs.unix(profile.timecreated).format("Do MMM YYYY")}
-          </p>
-          <p>
-            Last Logoff:{" "}
-            {dayjs.unix(profile.lastlogoff).format("Do MMM YYYY, h:mmA")}
-          </p>
-          <p>
-            Last Logoff:{" "}
-            {dayjs.unix(profile.lastlogoff).format("Do MMM YYYY, h:mmA")}
+            <strong>Created: </strong>
+            {dayjs.unix(profile.timecreated).format("Do MMM YYYY")}
           </p>
           <p>{getUserState(profile?.personastate)}</p>
         </Col>
@@ -100,8 +93,7 @@ export const ProfilePage = () => {
           return game.name.toLowerCase().includes(searchQuery.toLowerCase());
         })
         .sort(handleListSort)
-        .map((game, index, arr) => {
-          console.log(arr);
+        .map((game) => {
           return (
             <Row key={`gl-${game.appid}`} style={{ width: 300 }}>
               <Link to={`/game/${game.appid}`}>
@@ -120,6 +112,7 @@ export const ProfilePage = () => {
             </Row>
           );
         });
+
     return (
       <Col
         style={{
@@ -135,9 +128,10 @@ export const ProfilePage = () => {
 
   return (
     <Page>
-      <Navbar />
       {renderSteamProfile()}
+      <h3>Recent Games</h3>
       {renderRecentGames()}
+      <h3>All Games</h3>
       <Row>
         <input
           value={searchQuery}

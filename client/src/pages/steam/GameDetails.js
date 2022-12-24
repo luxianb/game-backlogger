@@ -1,15 +1,17 @@
+import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Page, Row } from "../../components/common";
-import Navbar from "../../layouts/navbar/Navbar";
+import { AchievementItem } from "../../components/steam/AchievementItem";
+import { BoxArt } from "../../components/steam/BoxArt";
+import { HeroBanner } from "../../components/steam/HeroBanner";
 import { useGameData, useSteamId } from "../../utils/hooks";
-import { useGameAchievements } from "../../utils/hooks/useGameAchievements";
 import {
-  getGameBoxart,
-  getGameHeroBanner,
-  getGameImageAssets,
-} from "../../utils/steamTools";
+  useFavAchievements,
+  useToggleFavAchievement,
+} from "../../utils/hooks/useFavAchievements";
+import { useGameAchievements } from "../../utils/hooks/useGameAchievements";
 
 export const GameDetailsPage = () => {
   const params = useParams();
@@ -17,113 +19,81 @@ export const GameDetailsPage = () => {
   const steamId = useSteamId();
   const [achievements] = useGameAchievements(steamId, params?.appid);
   const containerRef = useRef();
+  const [favAchievements] = useFavAchievements(params?.appid);
+  console.log("🚀  favAchievements", favAchievements);
   const [containerHeight, setContainerHeight] = useState(null);
-  const heroBannerUrl = getGameHeroBanner(params?.appid);
-  console.log("🚀  heroBannerUrl", heroBannerUrl);
-  const boxartUrl = getGameBoxart(params?.appid);
-  // console.log("🚀  achievement", achievements);
-  console.log("🚀  gameData", game);
 
   useEffect(() => {
     if (!containerRef.current) return;
+
     const height = containerRef.current.clientHeight.toFixed(2) * 0.75;
-    console.log("🚀  height", height);
-    if (containerHeight !== height) setContainerHeight(height);
+    if (containerHeight !== height) {
+      setContainerHeight(height);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerRef?.current?.clientHeight]);
+
+  const renderAchievementHeader = () => {
+    const achieved = achievements.filter((item) => item.achieved).length;
+    const total = achievements.length;
+
+    return <h3>{`Achievements (${achieved}/${total})`}</h3>;
+  };
 
   const renderAchievements = () => {
     if (!achievements.length) return null;
 
     const renderList = () =>
-      achievements.map((item) => (
-        <Row key={item.apiname}>
-          <img
-            alt="achievement-icon"
-            src={item?.achieved ? item?.icon : item?.icongray}
-          />
-          <Col>
-            <p>{item?.name}</p>
-            <p>{item?.description}</p>
-            {Boolean(item?.achieved) && (
-              <p>
-                Unlocked:{" "}
-                {dayjs.unix(item?.unlocktime).format("D MMM 'YY, h:mmA")}
-              </p>
-            )}
-          </Col>
-        </Row>
-      ));
+      achievements.map((item) => {
+        const prop = {
+          ...item,
+          appid: params?.appid,
+          favourited: favAchievements.some(
+            ({ gameid, achievementid }) =>
+              gameid === params?.appid && achievementid === item.apiname
+          ),
+        };
+        return <AchievementItem key={item.apiname} {...prop} />;
+      });
 
     return <Col>{renderList()}</Col>;
   };
 
   return (
     <Page>
-      <Navbar />
+      <HeroBanner appid={params?.appid} />
 
-      {heroBannerUrl ? (
-        <img
-          src={getGameHeroBanner(params?.appid)}
-          alt="hero-banner"
-          style={{ filter: `brightness(.3)` }}
-        />
-      ) : (
-        <div
-          style={{
-            height: `30.967vw`,
-            width: "100vw",
-            backgroundColor: "blue",
-          }}
-        ></div>
-      )}
-      <Row
-        style={{
-          transform: `translateY(-75%)`,
-          gap: "1rem",
-          marginBottom: -containerHeight || "unset",
-          padding: "0 1rem",
-        }}
+      <DetailContainer
+        style={{ marginBottom: -containerHeight || "unset" }}
         ref={containerRef}
       >
-        {boxartUrl ? (
-          <img
-            src={getGameBoxart(params?.appid)}
-            alt="box-art"
-            width={250}
-            style={{
-              boxShadow: `0 0 6px rgba(0,0,0,.1)`,
-              borderRadius: 8,
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              height: 375,
-              width: 250,
-              backgroundColor: "blue",
-              boxShadow: `0 0 6px rgba(0,0,0,.1)`,
-              borderRadius: 8,
-            }}
-          ></div>
-        )}
-        <Col style={{ gap: ".5rem" }}>
-          {game?.name && <h1 style={{ color: "white" }}>{game?.name}</h1>}
-          <div
-            style={{ color: "white", marginRight: "1rem" }}
-            dangerouslySetInnerHTML={{ __html: game?.short_description }}
-          />
-        </Col>
-      </Row>
-      {game?.header_image && (
-        <img src={game?.header_image} width={500} alt="banner" />
-      )}
-      {/* <div dangerouslySetInnerHTML={{ __html: game?.detailed_description }} /> */}
+        <BoxArt appid={params?.appid} />
+        <TextContainer>
+          <h1>{game?.name}</h1>
+          <div dangerouslySetInnerHTML={{ __html: game?.short_description }} />
+        </TextContainer>
+      </DetailContainer>
 
-      <h3>{`Achievements (${
-        achievements.filter((item) => item.achieved).length
-      }/${achievements.length})`}</h3>
-      {renderAchievements()}
+      <ContentContainer>
+        {renderAchievementHeader()}
+        {renderAchievements()}
+      </ContentContainer>
     </Page>
   );
 };
+
+const DetailContainer = styled(Row)`
+  transform: translateY(-75%);
+  gap: 1rem;
+  padding: 0 1rem;
+`;
+const TextContainer = styled(Col)`
+  gap: 0.5rem;
+  color: white;
+`;
+
+const ContentContainer = styled(Col)`
+  padding: 0 1rem;
+  margin-top: 1rem;
+  gap: 0.5rem;
+`;

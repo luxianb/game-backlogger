@@ -60,7 +60,6 @@ const SignUpPage = () => {
 
   return (
     <Page>
-      <Navbar />
       <Title>Create Account</Title>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Row style={{ gap: ".5rem" }}>

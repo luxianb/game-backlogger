@@ -12,31 +12,6 @@ export class SteamService {
     @Inject(KNEX_CONNECTION) private readonly knex,
     private readonly httpService: HttpService,
   ) {}
-  private SteamProfiles = () => this.knex('steamProfiles');
-
-  // async findProfile(id: number): Promise<any> {
-  //   return await this.SteamProfiles().where({ identifier: id }).first();
-  // }
-  // async addProfile(steamInfo): Promise<any> {
-  //   const profileFound = await this.SteamProfiles()
-  //     .where({
-  //       identifier: steamInfo.id,
-  //     })
-  //     .first();
-
-  //   if (profileFound) return this.updateProfile(profileFound.id, steamInfo);
-
-  //   const id = await this.SteamProfiles().insert(steamInfo);
-  //   return await this.SteamProfiles().where({ id }).first();
-  // }
-  // async updateProfile(id, steamInfo): Promise<any> {
-  //   steamInfo.updatedAt = this.knex.fn.now();
-  //   await this.SteamProfiles().where({ id }).update(steamInfo);
-  //   return await this.SteamProfiles().where({ id }).first();
-  // }
-  // async deleteProfile(id): Promise<any> {
-  //   return await this.SteamProfiles().where({ id }).delete();
-  // }
 
   async getPlayerSummaries(steamids: string): Promise<any> {
     const url = `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/`;
@@ -58,6 +33,7 @@ export class SteamService {
       steamid,
       include_played_free_games,
       include_appinfo,
+      format: 'json',
     };
 
     const data = await lastValueFrom(
@@ -146,7 +122,13 @@ export class SteamService {
   async getAppList(): Promise<any> {
     const url = `https://api.steampowered.com/ISteamApps/GetAppList/v2/`;
     const params = { key };
-    const data = await axios.get(url, { params }).then((res) => res.data);
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(
+        map((res) => {
+          return res.data.applist.apps;
+        }),
+      ),
+    );
     return data;
   }
   async getAppInfo(appids: string): Promise<any> {

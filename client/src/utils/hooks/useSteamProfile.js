@@ -15,7 +15,6 @@ export const useSteamProfile = (steamId) => {
 
   const getUserSteamProfile = async (steamId) => {
     const data = await fetchSteamProfile(steamId);
-    console.log("🚀  data", data);
     setProfile(data);
   };
 

@@ -15,7 +15,6 @@ export const useUserGamelist = (steamId) => {
 
   const getUserGamelist = async (steamId) => {
     const data = await fetchSteamUserGamelist(steamId);
-    console.log("🚀  data", data);
     setGamelist(data.games);
   };
 

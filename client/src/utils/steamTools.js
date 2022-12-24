@@ -60,26 +60,31 @@ export function getUserState(index) {
 }
 
 export const getGameHeader = (appId) => {
+  if (!appId) return null;
   const url = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/header.jpg`;
   const valid = checkUrl(url);
   return valid ? url : null;
 };
 export const getGameLogo = (appId) => {
+  if (!appId) return null;
   const url = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/logo.png`;
   const valid = checkUrl(url);
   return valid ? url : null;
 };
 export const getGameHeroBanner = (appId) => {
+  if (!appId) return null;
   const url = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_hero.jpg`;
   const valid = checkUrl(url);
   return valid ? url : null;
 };
 export const getGameBoxart = (appId) => {
+  if (!appId) return null;
   const url = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900.jpg`;
   const valid = checkUrl(url);
   return valid ? url : null;
 };
 export const getGameBackground = (appId) => {
+  if (!appId) return null;
   const url = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/page_bg_generated_v6b.jpg`;
   const valid = checkUrl(url);
   return valid ? url : null;

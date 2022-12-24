@@ -33,7 +33,6 @@ export const LogInPage = () => {
 
   return (
     <Page>
-      <Navbar />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <h1 style={{ textAlign: "center" }}>Sign In</h1>
         <Row>

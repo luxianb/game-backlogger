@@ -12,6 +12,9 @@ const styles = css`
   label {
     margin: unset;
   }
+  body {
+    background-color: #24282f;
+  }
 `;
 
 export default styles;

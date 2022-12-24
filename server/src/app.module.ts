@@ -12,6 +12,8 @@ import config from '../knexfile';
 import configuration from './config/configuration';
 import { SteamModule } from './steam/steam.module';
 import { SessionsController } from './sessions.controller';
+import { FavAchievementsModule } from './favAchievements/favAchievements.module';
+import { FavGamesModule } from './favGames/favGames.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { SessionsController } from './sessions.controller';
     UsersModule,
     AuthModule,
     SteamModule,
+    FavAchievementsModule,
+    FavGamesModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '60s' },
