@@ -4,6 +4,7 @@ import SignUpPage from "./pages/SignUp";
 import { LogInPage } from "./pages/LogIn";
 import { ProfilePage } from "./pages/Profile";
 import { GameDetailsPage } from "./pages/steam/GameDetails";
+import { AchievementsPage } from "./pages/Achievements";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <ProfilePage />,
+  },
+  {
+    path: "/achievements",
+    element: <AchievementsPage />,
   },
   {
     path: "/game/:appid",

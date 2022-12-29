@@ -1,13 +1,14 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { KNEX_CONNECTION } from 'src/knex';
 import { HttpService } from '@nestjs/axios';
-import { map, lastValueFrom } from 'rxjs';
+import { map, lastValueFrom, catchError } from 'rxjs';
 
 const key = process.env.STEAM_API_KEY;
 
 @Injectable()
 export class SteamService {
+  private readonly logger = new Logger(SteamService.name);
   constructor(
     @Inject(KNEX_CONNECTION) private readonly knex,
     private readonly httpService: HttpService,
@@ -33,6 +34,7 @@ export class SteamService {
       steamid,
       include_played_free_games,
       include_appinfo,
+      include_extended_appinfo: true,
       format: 'json',
     };
 
@@ -40,6 +42,26 @@ export class SteamService {
       this.httpService.get(url, { params }).pipe(
         map((res) => {
           return res.data.response;
+        }),
+      ),
+    );
+    return data;
+  }
+  async getUserGameDetail(steamid: string, appid: string): Promise<any> {
+    const url = `http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/`;
+    const params = {
+      key,
+      steamid,
+      include_played_free_games: true,
+      include_appinfo: true,
+      format: 'json',
+      include_extended_appinfo: true,
+      'appids_filter[0]': appid,
+    };
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(
+        map((res) => {
+          return res.data.response.games[0];
         }),
       ),
     );
@@ -62,7 +84,7 @@ export class SteamService {
     const data = await lastValueFrom(
       this.httpService
         .get(url, { params })
-        .pipe(map((res) => res.data?.playerstats?.achievements)),
+        .pipe(map((res) => res.data?.playerstats)),
     );
 
     return data;
@@ -71,9 +93,13 @@ export class SteamService {
     const url = `http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/`;
     const params = { appid, key, steamid, l: 'english' };
     const data = await lastValueFrom(
-      this.httpService
-        .get(url, { params })
-        .pipe(map((res) => res.data?.playerstats?.achievements)),
+      this.httpService.get(url, { params }).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error);
+          throw 'An error happened!';
+        }),
+        map((res) => res?.data?.playerstats?.achievements),
+      ),
     );
     return data;
   }
@@ -100,8 +126,12 @@ export class SteamService {
     const params = { key, appid, l: 'english' };
     const data = await lastValueFrom(
       this.httpService.get(url, { params }).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error);
+          throw 'An error happened!';
+        }),
         map((res) => {
-          return res.data?.game;
+          return res?.data?.game;
         }),
       ),
     );

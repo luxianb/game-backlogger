@@ -1,13 +1,29 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { getGameBoxart } from "../../utils/steamTools";
+import { getGameBoxart, getGamePortrait } from "../../utils/steamTools";
 import { GameController } from "akar-icons";
+import { useState } from "react";
 
 export const BoxArt = ({ appid, ...props }) => {
+  const [
+    imageError,
+    // setImageError
+  ] = useState(false);
   const imageUrl = getGameBoxart(appid);
 
-  if (imageUrl) {
-    return <Image {...props} src={imageUrl} alt="boxart" />;
+  if (imageUrl && !imageError) {
+    return (
+      <Image
+        {...props}
+        src={imageUrl}
+        alt="boxart"
+        onError={({ currentTarget }) => {
+          currentTarget.onerror = null; // prevents looping
+          currentTarget.src = getGamePortrait(appid);
+          // setImageError(true);
+        }}
+      />
+    );
   }
   return (
     <NullContainer {...props}>

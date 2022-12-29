@@ -32,7 +32,11 @@ export class SteamController {
   @Get('profile/:id/gamelist')
   async getUserGameList(@Param('id') id) {
     const data = await this.steamService.getOwnedGames(id);
-    // Logger.log(data);
+    return data;
+  }
+  @Get('profile/:id/gamelist/:appid')
+  async getUserGameDetail(@Param('id') id, @Param('appid') appid) {
+    const data = await this.steamService.getUserGameDetail(id, appid);
     return data;
   }
   @Get('profile/:id/recent')

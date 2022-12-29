@@ -2,12 +2,12 @@ import styled from "@emotion/styled";
 import { Navigation } from "../../layouts/navbar/Navigation";
 import { useElementSize } from "../../utils/hooks/useElementSize";
 
-export const Page = ({ children }) => {
+export const Page = ({ children, style }) => {
   const [navRef, navWidth] = useElementSize("width");
   const [pageRef, pageWidth] = useElementSize("width");
 
   const getStyle = () => {
-    const styles = {};
+    const styles = { ...style };
     if (!navWidth || !pageWidth) {
       styles.maxWidth = "unset";
       return styles;
@@ -49,4 +49,5 @@ const Content = styled.main`
   flex-direction: column;
   max-height: 100vh;
   overflow-y: auto;
+  position: relative;
 `;

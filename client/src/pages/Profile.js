@@ -1,5 +1,6 @@
 import { Col, Page, Row } from "../components/common";
 import { Link } from "react-router-dom";
+import styled from "@emotion/styled";
 import { useRecentGames } from "../utils/hooks/useRecentGames";
 import { useSteamId } from "../utils/hooks/useSteamId";
 import { useSteamProfile, useUserGamelist } from "../utils/hooks";
@@ -9,32 +10,23 @@ import {
   getUserState,
 } from "../utils/steamTools";
 import advancedFormat from "dayjs/plugin/advancedFormat";
+import { useSearchParamsState } from "../utils/hooks/useSearchParamsState";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { GameItem } from "../components/steam/GameItem";
+import { SteamProfileDisplay } from "../components/steam/SteamProfileDisplay";
 dayjs.extend(advancedFormat);
 
 export const ProfilePage = () => {
+  const [searchParams, setSearchParams] = useSearchParamsState();
   const [steamId] = useSteamId();
   const [recentGames, { isLoading }] = useRecentGames(steamId);
   const [gameList] = useUserGamelist(steamId);
   const [profile] = useSteamProfile(steamId);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortCriteria, setSortCriteria] = useState("NAME");
 
   const renderSteamProfile = () => {
     if (!profile) return null;
     return (
-      <Row>
-        <img src={profile.avatarfull} alt="avatar" />
-        <Col>
-          <h2>{profile.personaname}</h2>
-          <p>
-            <strong>Created: </strong>
-            {dayjs.unix(profile.timecreated).format("Do MMM YYYY")}
-          </p>
-          <p>{getUserState(profile?.personastate)}</p>
-        </Col>
-      </Row>
+      <SteamProfileDisplay {...profile} style={{ marginBottom: "2rem" }} />
     );
   };
 
@@ -43,111 +35,88 @@ export const ProfilePage = () => {
 
     const content = () =>
       recentGames.map((game) => (
-        <Row key={`rg-${game.appid}`} style={{ minWidth: 300 }}>
-          <Link to={`/game/${game.appid}`}>
-            <img
-              src={getGameImageUrl(game.appid, game?.img_icon_url)}
-              alt="game_thumbnail"
-              style={{ height: 50, width: 50 }}
-            />
-          </Link>
-          <Col>
-            <p>{game?.name}</p>
-            {game?.playtime_forever && (
-              <p>Total playtime: {getPlaytime(game?.playtime_forever)}</p>
-            )}
-            {game?.playtime_2weeks && (
-              <p>Last 2 weeks: {getPlaytime(game?.playtime_2weeks)}</p>
-            )}
-          </Col>
-        </Row>
+        <GameItem key={`rg-${game.appid}`} {...game} />
       ));
 
-    return <Row style={{ overflowX: "auto" }}>{content()}</Row>;
+    return <Row style={{ overflowX: "auto", gap: ".5rem" }}>{content()}</Row>;
   };
 
   const renderGameList = () => {
-    if (!gameList.length) return null;
+    if (!gameList?.length) return null;
 
     const handleListSort = (a, b) => {
-      switch (sortCriteria) {
-        case "MOST_PLAYED":
+      switch (searchParams.get("sorting")) {
+        case "most_played":
           return b.playtime_forever - a.playtime_forever;
-        case "LEAST_PLAYED":
+        case "least_played":
           return a.playtime_forever - b.playtime_forever;
-        case "NAME":
+        case "name":
         default: {
-          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-          if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+          const _a = a.sort_as ?? a.name;
+          const _b = b.sort_as ?? b.name;
+          if (_a.toLowerCase() > _b.toLowerCase()) return 1;
+          if (_a.toLowerCase() < _b.toLowerCase()) return -1;
           return 0;
         }
       }
     };
 
-    const content = () =>
+    const renderGames = () =>
       gameList
         .filter((game) => game.img_icon_url)
         .filter((game) => {
-          if (!searchQuery) return true;
-          return game.name.toLowerCase().includes(searchQuery.toLowerCase());
+          if (!searchParams.get("filter")) return true;
+          return game.name
+            .toLowerCase()
+            .includes(searchParams.get("filter").toLowerCase());
         })
         .sort(handleListSort)
         .map((game) => {
-          return (
-            <Row key={`gl-${game.appid}`} style={{ width: 300 }}>
-              <Link to={`/game/${game.appid}`}>
-                <img
-                  src={getGameImageUrl(game.appid, game?.img_icon_url)}
-                  alt="game_thumbnail"
-                  style={{ height: 50, width: 50 }}
-                />
-              </Link>
-              <Col>
-                <p>{game?.name}</p>
-                {game?.playtime_forever > 0 && (
-                  <p>Total playtime: {getPlaytime(game?.playtime_forever)}</p>
-                )}
-              </Col>
-            </Row>
-          );
+          return <GameItem key={`gl-${game.appid}`} {...game} />;
         });
 
-    return (
-      <Col
-        style={{
-          overflowX: "auto",
-          flexWrap: "wrap",
-          maxHeight: 600,
-        }}
-      >
-        {content()}
-      </Col>
-    );
+    return <GamelistContainer>{renderGames()}</GamelistContainer>;
   };
 
   return (
     <Page>
       {renderSteamProfile()}
-      <h3>Recent Games</h3>
-      {renderRecentGames()}
-      <h3>All Games</h3>
-      <Row>
-        <input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search games"
-        />
-        <select
-          placeholder="Sort by"
-          value={sortCriteria}
-          onChange={(e) => setSortCriteria(e.target.value)}
-        >
-          <option value="NAME">Name</option>
-          <option value="MOST_PLAYED">Most played</option>
-          <option value="LEAST_PLAYED">Least played</option>
-        </select>
-      </Row>
-      {renderGameList()}
+
+      <Col style={{ marginBottom: "2rem", gap: ".5rem" }}>
+        <h2>Recent Games</h2>
+        {renderRecentGames()}
+      </Col>
+
+      <Col style={{ gap: ".5rem" }}>
+        <Row style={{ justifyContent: "space-between", marginRight: "1rem" }}>
+          <h2>All Games</h2>
+          <Row style={{ gap: ".5rem" }}>
+            <input
+              value={searchParams.get("filter")}
+              onChange={(e) => setSearchParams({ filter: e.target.value })}
+              placeholder="Search games"
+            />
+            <select
+              placeholder="Sort by"
+              value={searchParams.get("sorting")}
+              onChange={(e) => setSearchParams({ sorting: e.target.value })}
+            >
+              <option value="name">Name</option>
+              <option value="most_played">Most played</option>
+              <option value="least_played">Least played</option>
+            </select>
+          </Row>
+        </Row>
+        {renderGameList()}
+      </Col>
     </Page>
   );
 };
+
+const GamelistContainer = styled(Col)`
+  overflow-x: auto;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  max-height: 600px;
+  align-content: flex-start;
+`;

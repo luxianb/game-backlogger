@@ -1,8 +1,13 @@
 import styled from "@emotion/styled";
 import { Col, Row } from "../common";
 import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { useToggleFavAchievement } from "../../utils/hooks/useFavAchievements";
+import { css } from "@emotion/react";
+
+dayjs.extend(advancedFormat);
+const getUnlockTime = (time) => dayjs.unix(time).format("Do MMM YYYY, h:mmA");
 
 export const AchievementItem = (props) => {
   const toggleFav = useToggleFavAchievement();
@@ -16,9 +21,8 @@ export const AchievementItem = (props) => {
     description,
     unlocktime,
     favourited,
+    hidden,
   } = props;
-
-  const getUnlockTime = (time) => dayjs.unix(time).format("D MMM 'YY, h:mmA");
 
   const handleToggleFav = async () => {
     const postBody = {
@@ -26,40 +30,64 @@ export const AchievementItem = (props) => {
       achievementid: apiname,
       name: name,
       description: description,
-      icon: icongray,
+      icon: icon,
+      icongray: icongray,
       achieved: achieved,
     };
     toggleFav.mutate(postBody);
   };
 
   return (
-    <Container>
-      <Icon src={achieved ? icon : icongray} alt="achievement-icon" />
+    <Container hidden={hidden} achieved={achieved}>
+      <Icon
+        src={achieved ? icon : icongray}
+        alt="achievement-icon"
+        onError={({ currentTarget }) => {
+          currentTarget.onerror = null;
+          currentTarget.src = icon;
+        }}
+      />
       <Col>
         <Header>{name}</Header>
         {description && <Subheader>{description}</Subheader>}
         {Boolean(achieved) && (
-          <Subheader>{`Unlocked: ${getUnlockTime(unlocktime)}`}</Subheader>
+          <UnlockTime>{`Unlocked: ${getUnlockTime(unlocktime)}`}</UnlockTime>
         )}
       </Col>
 
-      <Clickable onClick={handleToggleFav}>
-        {!favourited ? <BsBookmark /> : <BsBookmarkFill />}
-      </Clickable>
+      {!achieved && (
+        <Clickable onClick={handleToggleFav}>
+          {!favourited ? <BsBookmark /> : <BsBookmarkFill />}
+        </Clickable>
+      )}
     </Container>
   );
 };
 
-const Container = styled(Row)``;
+const Container = styled(Row)`
+  min-width: 450px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  ${getHiddenStyle}
+`;
+function getHiddenStyle({ hidden, achieved }) {
+  if (hidden && !achieved)
+    return css`
+      opacity: 0.5;
+    `;
+}
 const Icon = styled.img`
   height: 100px;
   width: 100px;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
 `;
-const Header = styled.h4`
-  margin-bottom: 0.5rem;
-`;
+const Header = styled.h3``;
 const Subheader = styled.p``;
+const UnlockTime = styled.p`
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+`;
 const Clickable = styled.div`
   margin-left: auto;
   cursor: pointer;

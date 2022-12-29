@@ -1,13 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  fetchSteamGameAchievements,
-  getSchemaForGame,
-} from "../apis/steam.apis";
+import { fetchSteamGameAchievements } from "../apis/steam.apis";
+import { useGameSchema } from "./useGameSchema";
 
 const KEY = "GAME_ACHIEVEMENT";
-const SCHEMA_KEY = "GAME_SCHEMA";
 
 export const useGameAchievements = (steamid, appid) => {
+  const [schema, { isLoading: isLoadingSchema, error: schemaError }] =
+    useGameSchema(appid);
   const {
     data: achievements,
     isLoading,
@@ -19,27 +18,21 @@ export const useGameAchievements = (steamid, appid) => {
       return fetchSteamGameAchievements(steamid, appid);
     },
   });
-  const {
-    data: schema,
-    isLoading: isLoadingSchema,
-    error: schemaError,
-  } = useQuery({
-    queryKey: [SCHEMA_KEY, `${steamid}-${appid}`],
-    queryFn: () => getSchemaForGame(appid),
-  });
 
   const populateAchievement = (achievements, schema) => {
-    return achievements.map((item) => {
-      const schemaInfo = schema.availableGameStats.achievements.find(
-        (e) => e.name === item.apiname
-      );
+    if (!achievements?.length || !achievements) return [];
+
+    return achievements?.map((item) => {
+      const achievementSchema = schema?.availableGameStats?.achievements;
+      const schemaInfo = achievementSchema.find((e) => e.name === item.apiname);
+
       const { hidden, icon, icongray, defaultvalue } = schemaInfo;
       return { ...item, hidden, icon, icongray, defaultvalue };
     });
   };
 
   const data =
-    !isLoading && !isLoadingSchema
+    !isLoading && !isLoadingSchema && !error && !schemaError
       ? populateAchievement(achievements, schema)
       : [];
 

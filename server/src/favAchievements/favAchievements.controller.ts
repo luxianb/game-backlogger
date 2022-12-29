@@ -57,7 +57,11 @@ export class FavAchievementsController {
     if (!favourited) {
       return this.favAchievementsService.addFavAchievements(body);
     } else {
-      return this.favAchievementsService.removeFavAchievements(favourited?.id);
+      return this.favAchievementsService.removeFavAchievements(
+        favourited?.id,
+        body.user_id,
+        body.gameid,
+      );
     }
     return;
   }

@@ -1,18 +1,41 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useState, useEffect } from "react";
 import { getGameHeroBanner } from "../../utils/steamTools";
 
-export const HeroBanner = ({ appid, ...props }) => {
+export const HeroBanner = ({ appid, fallback, ...props }) => {
+  const [imageError, setImageError] = useState(false);
   const imageUrl = getGameHeroBanner(appid);
 
-  if (imageUrl) {
-    return <Image {...props} src={imageUrl} alt="hero-banner" />;
+  useEffect(() => {
+    if (fallback) {
+      setImageError(false);
+    }
+  }, [fallback]);
+
+  if (imageUrl && !imageError) {
+    return (
+      <Image
+        {...props}
+        src={imageUrl}
+        alt="hero-banner"
+        onError={({ currentTarget }) => {
+          currentTarget.onerror = null; // prevents looping
+          if (!fallback) {
+            setImageError(true);
+          } else {
+            currentTarget.src = fallback;
+          }
+        }}
+      />
+    );
   }
   return <NullContainer {...props}></NullContainer>;
 };
 
 const Image = styled.img`
   filter: brightness(0.3);
+  max-height: 32.292vw;
   width: 100%;
   ${getContainerStyle}
 `;
@@ -22,7 +45,8 @@ const NullContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 32.292vw;
+  min-height: 32.292vw;
+  max-height: 32.292vw;
   background-color: #2979ff;
   filter: brightness(0.8);
   ${getContainerStyle};

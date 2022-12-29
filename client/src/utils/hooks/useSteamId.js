@@ -3,9 +3,9 @@ import { getUserProfile } from "../apis/user.apis";
 
 const KEY = "STEAM_ID";
 
-export const useSteamId = (steamId) => {
+export const useSteamId = () => {
   const { data, isLoading, error } = useQuery({
-    queryKey: [KEY, steamId],
+    queryKey: [KEY],
     queryFn: async () => {
       const data = await getUserProfile();
       if (data?.steamId) return data?.steamId;
