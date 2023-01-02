@@ -3,8 +3,9 @@ import LandingPage from "./pages/Landing";
 import SignUpPage from "./pages/SignUp";
 import { LogInPage } from "./pages/LogIn";
 import { ProfilePage } from "./pages/Profile";
-import { GameDetailsPage } from "./pages/steam/GameDetails";
+import { GameDetailsPage } from "./pages/GameDetails";
 import { AchievementsPage } from "./pages/Achievements";
+import { GameWatchlistPage } from "./pages/GameWatchlist";
 
 const router = createBrowserRouter([
   {
@@ -21,8 +22,12 @@ const router = createBrowserRouter([
     element: <LogInPage />,
   },
   {
-    path: "/profile",
+    path: "/game",
     element: <ProfilePage />,
+  },
+  {
+    path: "/watchlist",
+    element: <GameWatchlistPage />,
   },
   {
     path: "/achievements",

@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('favGames', (table) => {
     table.increments('id');
-    table.string('gameid').notNullable();
+    table.integer('gameid').notNullable();
     table.integer('pos');
     table.timestamps(true, true, true);
   });

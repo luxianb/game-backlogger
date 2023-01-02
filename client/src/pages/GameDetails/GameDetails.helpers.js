@@ -1,6 +1,7 @@
 import { HIDE_HIDDEN, SHOW_ALL } from "./GameDetails.contants";
 
 export function getFavourited(achievement, favAchievements) {
+  if (!favAchievements) return null;
   return favAchievements.some((e) => e.achievementid === achievement.apiname);
 }
 

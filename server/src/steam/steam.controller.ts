@@ -9,12 +9,16 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SteamService } from './steam.service';
+import { SteamWebAPIUtilService } from './steam.steamWebAPIUtil.service';
+import { SteamStoreService } from './steam.store.service';
 
 @Controller('steam')
 export class SteamController {
   constructor(
     private usersService: UsersService,
     private steamService: SteamService,
+    private steamStoreService: SteamStoreService,
+    private steamWebAPIUtilService: SteamWebAPIUtilService,
   ) {}
 
   @Post('return')
@@ -85,5 +89,69 @@ export class SteamController {
   async getGameNews(@Param('appId') appId) {
     const data = await this.steamService.getNewsForApp(appId);
     return data;
+  }
+
+  @Get('store/all')
+  async getAppList() {
+    const data = await this.steamStoreService.getAppList({
+      include_dlc: true,
+      include_hardware: true,
+      include_software: true,
+      include_videos: true,
+    });
+    return data;
+  }
+  @Get('store/game')
+  async geGameList() {
+    const data = await this.steamStoreService.getAppList({
+      max_results: 10000,
+    });
+    return data;
+  }
+  @Get('store/dlc')
+  async getDLCList() {
+    const data = await this.steamStoreService.getAppList({
+      include_dlc: true,
+      include_games: false,
+    });
+    return data;
+  }
+  @Get('store/hardware')
+  async getHardwareList() {
+    const data = await this.steamStoreService.getAppList({
+      include_hardware: true,
+      include_games: false,
+    });
+    return data;
+  }
+  @Get('store/software')
+  async getSoftwareList() {
+    const data = await this.steamStoreService.getAppList({
+      include_software: true,
+      include_games: false,
+    });
+    return data;
+  }
+  @Get('store/video')
+  async getVideoList() {
+    const data = await this.steamStoreService.getAppList({
+      include_videos: true,
+      include_games: false,
+    });
+    return data;
+  }
+
+  @Get('help')
+  async getSupportedAPIList() {
+    const data = await this.steamWebAPIUtilService.getSupportedAPIList();
+    return data?.apilist?.interfaces?.filter(({ name }) => {
+      if (name.includes('ICSGO')) return false;
+      if (name.includes('DOTA2')) return false;
+      if (name.includes('ITF')) return false;
+      if (name.includes('IEconItems_')) return false;
+      if (name.includes('IGCVersion_')) return false;
+      if (name.includes('Portal2')) return false;
+      return true;
+    });
   }
 }

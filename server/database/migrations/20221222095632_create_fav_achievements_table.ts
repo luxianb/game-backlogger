@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('favAchievements', (table) => {
     table.increments('id');
-    table.string('gameid').notNullable();
+    table.integer('gameid').notNullable();
     table.string('achievementid').notNullable();
     table.string('name').notNullable();
     table.string('description');

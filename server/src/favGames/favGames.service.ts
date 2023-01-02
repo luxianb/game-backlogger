@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { KNEX_CONNECTION } from '../knex';
 import { FavGame } from './favGames.interface';
 
 @Injectable()
 export class FavGamesService {
+  private readonly logger = new Logger(FavGamesService.name);
   constructor(@Inject(KNEX_CONNECTION) private readonly knex) {}
   private FavGames = () => this.knex('favGames');
 
@@ -18,10 +19,11 @@ export class FavGamesService {
   }
   async addFavGame(body: FavGame): Promise<FavGame> {
     const id = await this.FavGames().insert(body);
+    this.logger.log(id);
     return await this.FavGames().where({ id }).first();
   }
   async removeFavGame(id: number): Promise<{ success: boolean }> {
-    await this.FavGames().delete({ id });
+    await this.FavGames().where({ id }).delete();
     return { success: true };
   }
 }

@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { useNavigate, useParams } from "react-router-dom";
-import { Col, Page, Row } from "../../../components/common";
-import { AchievementItem } from "../../../components/steam/AchievementItem";
-import { BoxArt } from "../../../components/steam/BoxArt";
-import { HeroBanner } from "../../../components/steam/HeroBanner";
+import { Col, Page, Row } from "../../components/common";
+import { AchievementItem } from "../../components/steam/AchievementItem";
+import { BoxArt } from "../../components/steam/BoxArt";
+import { HeroBanner } from "../../components/steam/HeroBanner";
 import {
   useElementSize,
   useGameData,
@@ -11,7 +11,7 @@ import {
   useGameAchievements,
   useFavAchievements,
   useUserGameDetails,
-} from "../../../utils/hooks";
+} from "../../utils/hooks";
 import { css } from "@emotion/react";
 import {
   getFavourited,
@@ -21,14 +21,13 @@ import {
 } from "./GameDetails.helpers";
 import { HIDE_HIDDEN, SHOW_ALL } from "./GameDetails.contants";
 import { useState } from "react";
-import InfoItems from "../../../components/steam/InfoItems";
+import InfoItems from "../../components/steam/InfoItems";
 import { BackButton } from "./GameDetails.BackButton";
 import { FavToggle } from "./GameDetails.FavToggle";
-import { HiddenAchievementDisplay } from "../../../components/steam/HiddenAchievementDisplay";
-import {
-  useFavGames,
-  useToggleFavGames,
-} from "../../../utils/hooks/useFavGames";
+import { HiddenAchievementDisplay } from "../../components/steam/HiddenAchievementDisplay";
+import { useFavGames, useToggleFavGames } from "../../utils/hooks/useFavGames";
+import { Progressbar } from "../../components/common/Progressbar";
+import { AchievementProgress } from "./GameDetails.AchievementProgress";
 
 export const GameDetailsPage = () => {
   const params = useParams();
@@ -160,6 +159,12 @@ export const GameDetailsPage = () => {
       />
       {renderDetailsContainer()}
 
+      <AchievementProgress
+        total={achievements?.length}
+        current={unlockedAchievements.length}
+        css={styles.achievementProgress}
+      />
+
       <ContentContainer>
         <Row style={{ marginBottom: ".5rem" }}>
           {renderAchievementHeader()}
@@ -199,6 +204,10 @@ const styles = {
     top: 1.5rem;
     right: 1.5rem;
   `,
+  achievementProgress: css`
+    margin-top: 1rem;
+    margin-right: 1rem;
+  `,
 };
 
 const DetailContainer = styled(Row)`
@@ -212,7 +221,7 @@ const TextContainer = styled(Col)`
 `;
 
 const ContentContainer = styled(Col)`
-  padding: 0 1rem;
+  padding-right: 1rem;
   margin-top: 2rem;
   margin-bottom: 2rem;
   gap: 0.5rem;

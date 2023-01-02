@@ -1,25 +1,27 @@
-import { Col, Page, Row } from "../components/common";
-import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
-import { useRecentGames } from "../utils/hooks/useRecentGames";
-import { useSteamId } from "../utils/hooks/useSteamId";
-import { useSteamProfile, useUserGamelist } from "../utils/hooks";
-import {
-  getGameImageUrl,
-  getPlaytime,
-  getUserState,
-} from "../utils/steamTools";
-import advancedFormat from "dayjs/plugin/advancedFormat";
-import { useSearchParamsState } from "../utils/hooks/useSearchParamsState";
 import dayjs from "dayjs";
-import { GameItem } from "../components/steam/GameItem";
-import { SteamProfileDisplay } from "../components/steam/SteamProfileDisplay";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+
+import { Col, Page, Row } from "../../components/common";
+import { GameItem } from "../../components/steam/GameItem";
+import { SteamProfileDisplay } from "../../components/steam/SteamProfileDisplay";
+import { useRecentGames } from "../../utils/hooks/useRecentGames";
+import { useSteamId } from "../../utils/hooks/useSteamId";
+import { useSteamProfile, useUserGamelist } from "../../utils/hooks";
+import { useSearchParamsState } from "../../utils/hooks/useSearchParamsState";
+import {
+  getListFilterFunction,
+  getListSortingFunction,
+} from "./Profile.helpers";
+import { useFavGames } from "../../utils/hooks/useFavGames";
 dayjs.extend(advancedFormat);
 
 export const ProfilePage = () => {
-  const [searchParams, setSearchParams] = useSearchParamsState();
+  const [searchParams, setSearchParams] = useSearchParamsState({ filter: "" });
   const [steamId] = useSteamId();
   const [recentGames, { isLoading }] = useRecentGames(steamId);
+  const [favGames] = useFavGames();
+  console.log("🚀  favGames", favGames);
   const [gameList] = useUserGamelist(steamId);
   const [profile] = useSteamProfile(steamId);
 
@@ -35,7 +37,13 @@ export const ProfilePage = () => {
 
     const content = () =>
       recentGames.map((game) => (
-        <GameItem key={`rg-${game.appid}`} {...game} />
+        <GameItem
+          key={`rg-${game.appid}`}
+          {...game}
+          favourited={favGames.some(
+            ({ gameid }) => parseInt(gameid) === game.appid
+          )}
+        />
       ));
 
     return <Row style={{ overflowX: "auto", gap: ".5rem" }}>{content()}</Row>;
@@ -43,36 +51,27 @@ export const ProfilePage = () => {
 
   const renderGameList = () => {
     if (!gameList?.length) return null;
-
-    const handleListSort = (a, b) => {
-      switch (searchParams.get("sorting")) {
-        case "most_played":
-          return b.playtime_forever - a.playtime_forever;
-        case "least_played":
-          return a.playtime_forever - b.playtime_forever;
-        case "name":
-        default: {
-          const _a = a.sort_as ?? a.name;
-          const _b = b.sort_as ?? b.name;
-          if (_a.toLowerCase() > _b.toLowerCase()) return 1;
-          if (_a.toLowerCase() < _b.toLowerCase()) return -1;
-          return 0;
-        }
-      }
-    };
+    const listSortFunction = getListSortingFunction(
+      searchParams.get("sorting")
+    );
+    const listFilterFunction = getListFilterFunction(
+      searchParams.get("filter")
+    );
 
     const renderGames = () =>
       gameList
-        .filter((game) => game.img_icon_url)
-        .filter((game) => {
-          if (!searchParams.get("filter")) return true;
-          return game.name
-            .toLowerCase()
-            .includes(searchParams.get("filter").toLowerCase());
-        })
-        .sort(handleListSort)
+        .filter(listFilterFunction)
+        .sort(listSortFunction)
         .map((game) => {
-          return <GameItem key={`gl-${game.appid}`} {...game} />;
+          return (
+            <GameItem
+              key={`gl-${game.appid}`}
+              {...game}
+              favourited={favGames.some(
+                ({ gameid }) => parseInt(gameid) === game.appid
+              )}
+            />
+          );
         });
 
     return <GamelistContainer>{renderGames()}</GamelistContainer>;
@@ -92,13 +91,13 @@ export const ProfilePage = () => {
           <h2>All Games</h2>
           <Row style={{ gap: ".5rem" }}>
             <input
-              value={searchParams.get("filter")}
+              value={searchParams.get("filter") || ""}
               onChange={(e) => setSearchParams({ filter: e.target.value })}
               placeholder="Search games"
             />
             <select
               placeholder="Sort by"
-              value={searchParams.get("sorting")}
+              value={searchParams.get("sorting") || ""}
               onChange={(e) => setSearchParams({ sorting: e.target.value })}
             >
               <option value="name">Name</option>

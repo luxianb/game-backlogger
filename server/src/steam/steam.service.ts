@@ -173,4 +173,46 @@ export class SteamService {
     });
     return data;
   }
+  async getSteamLevel(steamid: string): Promise<any> {
+    const url = `https://api.steampowered.com/IPlayerService/GetSteamLevel/v1`;
+    const params = { key, steamid };
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(map((res) => res?.data)),
+    );
+    return data;
+  }
+  async getBadges(steamid: string): Promise<any> {
+    const url = `https://api.steampowered.com/IPlayerService/GetBadges/v1`;
+    const params = { key, steamid };
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(map((res) => res?.data)),
+    );
+    return data;
+  }
+  async getCommunityBadgeProgress(
+    steamid: string,
+    badgeid: string,
+  ): Promise<any> {
+    const url = `https://api.steampowered.com/IPlayerService/GetBadges/v1`;
+    const params = { key, steamid, badgeid };
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(map((res) => res?.data)),
+    );
+    return data;
+  }
+  async getServerInfo(): Promise<any> {
+    const url = `https://api.steampowered.com/ISteamWebAPIUtil/GetServerInfo/v1/`;
+    const data = await lastValueFrom(
+      this.httpService.get(url).pipe(map((res) => res?.data)),
+    );
+    return data;
+  }
+  async getSupportedAPIList(): Promise<any> {
+    const url = `https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/`;
+    const params = { key };
+    const data = await lastValueFrom(
+      this.httpService.get(url, { params }).pipe(map((res) => res?.data)),
+    );
+    return data;
+  }
 }

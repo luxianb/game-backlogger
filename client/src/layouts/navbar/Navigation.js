@@ -31,7 +31,13 @@ export const Navigation = () => {
       links.push(
         {
           type: "link",
-          href: "/profile",
+          href: "/game",
+          element: <Person size="1.5rem" />,
+        },
+        {
+          type: "link",
+          separator: true,
+          href: "/watchlist",
           element: <GameController size="1.5rem" />,
         },
         {
@@ -39,11 +45,6 @@ export const Navigation = () => {
           href: "/achievements",
           element: <BiAward size="1.5rem" />,
         },
-        // {
-        //   type: "link",
-        //   href: "/profile",
-        //   element: <Person size="1.5rem" />,
-        // },
         {
           type: "button",
           separator: true,

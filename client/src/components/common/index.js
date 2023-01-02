@@ -6,5 +6,6 @@ export * from "./Input.ErrorPrompt";
 export * from "./InputField";
 export * from "./Label";
 export * from "./Page";
+export * from "./Progressbar";
 export * from "./Row";
 export * from "./SteamButton";

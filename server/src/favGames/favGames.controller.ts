@@ -53,9 +53,9 @@ export class FavGamesController {
     );
 
     if (!favourited) {
-      return this.favGamesService.addFavGame(body);
+      return await this.favGamesService.addFavGame(body);
     } else {
-      return this.favGamesService.removeFavGame(body.id);
+      return await this.favGamesService.removeFavGame(favourited.id);
     }
   }
 }

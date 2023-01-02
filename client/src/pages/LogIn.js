@@ -24,7 +24,7 @@ export const LogInPage = () => {
 
     if (res.access_token) {
       useStore.setState({ access_token: res.access_token });
-      navigate("/profile");
+      navigate("/game");
     } else {
       setError("Incorrect username or password");
     }
