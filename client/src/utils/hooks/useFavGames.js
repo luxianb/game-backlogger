@@ -21,8 +21,7 @@ export const useFavGames = (appid) => {
   return [data, { error, isLoading }];
 };
 
-export const useToggleFavGames = () => {
-  const { appid } = useParams();
+export const useToggleFavGames = (appid) => {
   const queryKey = getQueryKey(appid);
   const queryClient = useQueryClient();
 
@@ -44,6 +43,8 @@ export const useToggleFavGames = () => {
     } else {
       optimisticData = { id: uuidv4(), ...variables };
       queryClient.setQueryData(queryKey, (old) => {
+        console.log("🚀  queryKey", queryKey);
+        console.log("🚀  old", old);
         const gameExists = old.find((game) => game.gameid === variables.gameid);
         if (gameExists) {
           return old.filter((item) => item.gameid !== variables.gameid);

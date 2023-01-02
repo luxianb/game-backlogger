@@ -4,19 +4,14 @@ import { Alarm } from "akar-icons";
 import { BiAward } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { Col, Row, Progressbar } from "../../components/common";
-import {
-  useGameAchievements,
-  useSteamId,
-  useUserGameDetails,
-} from "../../utils/hooks";
+import { useGameAchievements, useUserGameDetails } from "../../utils/hooks";
 import { useToggleFavGames } from "../../utils/hooks/useFavGames";
 import { getGameCapsuleMedium, getPlaytime } from "../../utils/steamTools";
 import { FavToggle } from "../GameDetails/GameDetails.FavToggle";
 
 export const WatchListItem = ({ appid }) => {
-  const [steamId] = useSteamId();
-  const [details] = useUserGameDetails(steamId, appid);
-  const [achievements] = useGameAchievements(steamId, appid);
+  const [details] = useUserGameDetails(appid);
+  const [achievements] = useGameAchievements(appid);
   const toggleGameFav = useToggleFavGames();
   const unlockedAchievements = achievements.filter((item) => item.achieved);
 

@@ -4,7 +4,7 @@ import { useGameSchema } from "./useGameSchema";
 
 const KEY = "GAME_ACHIEVEMENT";
 
-export const useGameAchievements = (steamid, appid) => {
+export const useGameAchievements = (appid) => {
   const [schema, { isLoading: isLoadingSchema, error: schemaError }] =
     useGameSchema(appid);
   const {
@@ -12,10 +12,10 @@ export const useGameAchievements = (steamid, appid) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: [KEY, `${steamid}-${appid}`],
+    queryKey: [KEY, appid],
     queryFn: () => {
-      if (!steamid || !appid) return [];
-      return fetchSteamGameAchievements(steamid, appid);
+      if (!appid) return [];
+      return fetchSteamGameAchievements(appid);
     },
   });
 

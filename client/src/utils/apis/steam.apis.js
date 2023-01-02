@@ -24,7 +24,7 @@ export const fetchSteamUserGamelist = () =>
       reject(error);
     }
   });
-export const fetchSteamUserGameDetails = (steamId, appId) =>
+export const fetchSteamUserGameDetails = (appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
@@ -48,7 +48,7 @@ export const fetchRecentSteamGames = () =>
       reject(error);
     }
   });
-export const fetchSteamGameAchievements = (steamId, appId) =>
+export const fetchSteamGameAchievements = (appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance

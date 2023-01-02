@@ -10,7 +10,8 @@ dayjs.extend(advancedFormat);
 const getUnlockTime = (time) => dayjs.unix(time).format("Do MMM YYYY, h:mmA");
 
 export const AchievementItem = (props) => {
-  const toggleFav = useToggleFavAchievement();
+  const toggleFav = useToggleFavAchievement(props.appid);
+
   const {
     appid,
     apiname,
@@ -22,11 +23,12 @@ export const AchievementItem = (props) => {
     unlocktime,
     favourited,
     hidden,
+    ...rest
   } = props;
 
   const handleToggleFav = async () => {
     const postBody = {
-      gameid: appid,
+      gameid: parseInt(appid),
       achievementid: apiname,
       name: name,
       description: description,
@@ -38,7 +40,12 @@ export const AchievementItem = (props) => {
   };
 
   return (
-    <Container hidden={hidden} achieved={achieved}>
+    <Container
+      hidden={hidden}
+      achieved={achieved}
+      className="achievement-container"
+      {...rest}
+    >
       <Icon
         src={achieved ? icon : icongray}
         alt="achievement-icon"
@@ -46,17 +53,22 @@ export const AchievementItem = (props) => {
           currentTarget.onerror = null;
           currentTarget.src = icon;
         }}
+        className="achievement-icon"
       />
       <Col>
-        <Header>{name}</Header>
-        {description && <Subheader>{description}</Subheader>}
+        <Header className="achievement-header">{name}</Header>
+        {description && (
+          <Subheader className="achievement-subheader">{description}</Subheader>
+        )}
         {Boolean(achieved) && (
-          <UnlockTime>{`Unlocked: ${getUnlockTime(unlocktime)}`}</UnlockTime>
+          <UnlockTime className="achievement-unlock">{`Unlocked: ${getUnlockTime(
+            unlocktime
+          )}`}</UnlockTime>
         )}
       </Col>
 
       {!achieved && (
-        <Clickable onClick={handleToggleFav}>
+        <Clickable onClick={handleToggleFav} className="achievement-fav-toggle">
           {!favourited ? <BsBookmark /> : <BsBookmarkFill />}
         </Clickable>
       )}

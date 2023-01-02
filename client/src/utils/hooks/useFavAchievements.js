@@ -4,7 +4,7 @@ import {
   toggleAchievementFav,
 } from "../apis/favAchievement.apis";
 import { v4 as uuidv4 } from "uuid";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 const KEY = "FAV_ACHIEVEMENT";
 
@@ -19,8 +19,8 @@ export const useFavAchievements = (appid) => {
   return [data, { isLoading, error }];
 };
 
-export const useToggleFavAchievement = () => {
-  const { appid } = useParams();
+export const useToggleFavAchievement = (appid) => {
+  // const { appid } = useParams();
   const queryKey = [KEY];
   if (appid) queryKey.push(appid);
 

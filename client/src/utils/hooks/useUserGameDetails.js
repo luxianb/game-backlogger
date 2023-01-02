@@ -3,12 +3,12 @@ import { fetchSteamUserGameDetails } from "../apis/steam.apis";
 
 const KEY = "USER_GAME_DETAILS";
 
-export const useUserGameDetails = (steamId, appId) => {
+export const useUserGameDetails = (appId) => {
   const { data, isLoading, error } = useQuery({
-    queryKey: [KEY, { steamId, appId }],
+    queryKey: [KEY, { appId }],
     queryFn: async () => {
-      if (!steamId || !appId) return {};
-      const data = await fetchSteamUserGameDetails(steamId, appId);
+      if (!appId) return {};
+      const data = await fetchSteamUserGameDetails(appId);
       return data;
     },
   });

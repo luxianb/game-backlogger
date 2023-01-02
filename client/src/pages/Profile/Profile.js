@@ -106,7 +106,7 @@ export const ProfilePage = () => {
         {renderRecentGames()}
       </Col>
 
-      <Col style={{ gap: ".5rem" }}>
+      <Col style={{ gap: ".5rem", paddingBottom: "2rem" }}>
         <Row style={{ justifyContent: "space-between", marginRight: "1rem" }}>
           <h2>All Games</h2>
           {renderGameListFilters()}

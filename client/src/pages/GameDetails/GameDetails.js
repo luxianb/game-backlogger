@@ -1,16 +1,16 @@
 import styled from "@emotion/styled";
 import { useNavigate, useParams } from "react-router-dom";
-import { Col, Page, Row } from "../../components/common";
+import { Button, Col, Page, Row } from "../../components/common";
 import { AchievementItem } from "../../components/steam/AchievementItem";
 import { BoxArt } from "../../components/steam/BoxArt";
 import { HeroBanner } from "../../components/steam/HeroBanner";
 import {
   useElementSize,
   useGameData,
-  useSteamId,
   useGameAchievements,
   useFavAchievements,
   useUserGameDetails,
+  useToggleFavAchievement,
 } from "../../utils/hooks";
 import { css } from "@emotion/react";
 import {
@@ -26,34 +26,70 @@ import { BackButton } from "./GameDetails.BackButton";
 import { FavToggle } from "./GameDetails.FavToggle";
 import { HiddenAchievementDisplay } from "../../components/steam/HiddenAchievementDisplay";
 import { useFavGames, useToggleFavGames } from "../../utils/hooks/useFavGames";
-import { Progressbar } from "../../components/common/Progressbar";
 import { AchievementProgress } from "./GameDetails.AchievementProgress";
 
 export const GameDetailsPage = () => {
   const params = useParams();
   const { appid } = params;
   const [game] = useGameData(params?.appid);
-  const [steamId] = useSteamId();
-  const [details] = useUserGameDetails(steamId, appid);
-  const [achievements] = useGameAchievements(steamId, params?.appid);
-  const [favAchievements] = useFavAchievements(params?.appid);
-  const [favGame] = useFavGames(params?.appid);
-  const toggleGameFav = useToggleFavGames();
+  const [details] = useUserGameDetails(appid);
+  const [
+    achievements,
+    { isLoading: isLoadingAchievements, error: achievementError },
+  ] = useGameAchievements(appid);
+  const [favAchievements] = useFavAchievements(appid);
+  const [favGame] = useFavGames(appid);
+  const toggleGameFav = useToggleFavGames(appid);
+  const toggleAchievementFav = useToggleFavAchievement(appid);
   const [containerRef, containerSize] = useElementSize();
   const navigate = useNavigate();
   const [viewFilter, setViewFilter] = useState(HIDE_HIDDEN);
 
   const unlockedAchievements = achievements?.filter((item) => item.achieved);
   const lockedAchievements = achievements?.filter((item) => !item.achieved);
-  const hiddenAchievements = achievements?.filter(
-    (item) => !item.achieved && item.hidden
-  );
+  // prettier-ignore
+  const hiddenAchievements = achievements?.filter((item) => !item.achieved && item.hidden);
 
   function handleToggleFavGame() {
     const payload = {
       gameid: params?.appid,
     };
     toggleGameFav.mutate(payload);
+  }
+
+  async function handleAddAllToWatchlist() {
+    const achievementsToAdd = lockedAchievements.filter(
+      ({ apiname }) =>
+        !favAchievements.some(({ achievementid }) => achievementid === apiname)
+    );
+
+    if (achievementsToAdd.length) {
+      for (const achievement of achievementsToAdd) {
+        const postBody = {
+          gameid: parseInt(appid),
+          achievementid: achievement.apiname,
+          name: achievement.name,
+          description: achievement.description,
+          icon: achievement.icon,
+          icongray: achievement.icongray,
+          achieved: achievement.achieved,
+        };
+        toggleAchievementFav.mutate(postBody);
+      }
+    } else if (achievementsToAdd.length === 0) {
+      for (const achievement of lockedAchievements) {
+        const postBody = {
+          gameid: parseInt(appid),
+          achievementid: achievement.apiname,
+          name: achievement.name,
+          description: achievement.description,
+          icon: achievement.icon,
+          icongray: achievement.icongray,
+          achieved: achievement.achieved,
+        };
+        toggleAchievementFav.mutate(postBody);
+      }
+    }
   }
 
   function getFallbackImage() {
@@ -148,6 +184,56 @@ export const GameDetailsPage = () => {
     );
   };
 
+  const renderAchievementDisplay = () => {
+    if (isLoadingAchievements || achievementError) return null;
+    return (
+      <ContentContainer>
+        <AchievementProgress
+          total={achievements?.length}
+          current={unlockedAchievements.length}
+          css={styles.achievementProgress}
+        />
+
+        <Row style={{ marginBottom: ".5rem" }}>
+          {renderAchievementHeader()}
+          {renderViewSelector()}
+        </Row>
+
+        {unlockedAchievements.length !== achievements?.length ? (
+          <>
+            {unlockedAchievements.length > 0 && (
+              <div style={{ marginBottom: "1rem" }}>
+                <Header>Unlocked</Header>
+                {renderAchievements("completed", "horizontal")}
+              </div>
+            )}
+
+            <Row
+              style={{
+                justifyContent: "space-between",
+                alignItems: "flex-end",
+                marginBottom: ".5rem",
+              }}
+            >
+              <Header style={{ marginBottom: 0 }}>Locked</Header>
+              <Button
+                label={
+                  favAchievements?.length >= lockedAchievements?.length
+                    ? "Remove all from watchlist"
+                    : "Add all to watchlist"
+                }
+                onClick={handleAddAllToWatchlist}
+              />
+            </Row>
+            {renderAchievements("incompleted")}
+          </>
+        ) : (
+          <>{renderAchievements()}</>
+        )}
+      </ContentContainer>
+    );
+  };
+
   return (
     <Page>
       <HeroBanner appid={params?.appid} fallback={getFallbackImage()} />
@@ -158,35 +244,7 @@ export const GameDetailsPage = () => {
         onClick={handleToggleFavGame}
       />
       {renderDetailsContainer()}
-
-      <AchievementProgress
-        total={achievements?.length}
-        current={unlockedAchievements.length}
-        css={styles.achievementProgress}
-      />
-
-      <ContentContainer>
-        <Row style={{ marginBottom: ".5rem" }}>
-          {renderAchievementHeader()}
-          {renderViewSelector()}
-        </Row>
-
-        {unlockedAchievements.length !== achievements?.length ? (
-          <>
-            {unlockedAchievements.length > 0 && (
-              <div style={{ marginBottom: "1rem" }}>
-                <AchievementHeader>Unlocked</AchievementHeader>
-                {renderAchievements("completed", "horizontal")}
-              </div>
-            )}
-
-            <AchievementHeader>Locked</AchievementHeader>
-            {renderAchievements("incompleted")}
-          </>
-        ) : (
-          <>{renderAchievements()}</>
-        )}
-      </ContentContainer>
+      {renderAchievementDisplay()}
     </Page>
   );
 };
@@ -205,8 +263,7 @@ const styles = {
     right: 1.5rem;
   `,
   achievementProgress: css`
-    margin-top: 1rem;
-    margin-right: 1rem;
+    margin-bottom: 1rem;
   `,
 };
 
@@ -226,7 +283,7 @@ const ContentContainer = styled(Col)`
   margin-bottom: 2rem;
   gap: 0.5rem;
 `;
-const AchievementHeader = styled.h3`
+const Header = styled.h3`
   margin-bottom: 0.5rem;
 `;
 const AchievementListContainer = styled(Col)`
@@ -239,6 +296,7 @@ function getDirectionStyle({ direction }) {
       return css`
         flex-direction: row;
         overflow-x: auto;
+        margin-right: -1rem;
       `;
     case "vertical":
     default:

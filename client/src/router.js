@@ -4,7 +4,7 @@ import SignUpPage from "./pages/SignUp";
 import { LogInPage } from "./pages/LogIn";
 import { ProfilePage } from "./pages/Profile";
 import { GameDetailsPage } from "./pages/GameDetails";
-import { AchievementsPage } from "./pages/Achievements";
+import { AchievementWatchlistPage } from "./pages/AchievementWatchlist";
 import { GameWatchlistPage } from "./pages/GameWatchlist";
 
 const router = createBrowserRouter([
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/achievements",
-    element: <AchievementsPage />,
+    element: <AchievementWatchlistPage />,
   },
   {
     path: "/game/:appid",

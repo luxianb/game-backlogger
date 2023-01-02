@@ -26,12 +26,13 @@ const Container = styled.div`
   flex-direction: row;
   border: 1.5px solid white;
   border-radius: 100px;
-  height: 5px;
+  height: 7.5px;
   width: auto;
   width: 50px;
   background-color: rgba(255, 255, 255, 0.25);
   position: relative;
   z-index: 2;
+  box-sizing: border-box;
 `;
 const Progress = styled.div`
   position: absolute;
