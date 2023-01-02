@@ -1,6 +1,6 @@
 export interface FavAchievement {
   id?: number;
-  gameid: string;
+  gameid: number;
   gamename?: string;
   achievementid: string;
   name: string;
@@ -15,7 +15,7 @@ export interface FavAchievement {
 
 export interface FavAchievementGameList {
   id?: number;
-  gameid: string;
+  gameid: number;
   name: string;
   pos: number;
   user_id: number;

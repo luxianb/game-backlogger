@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Logger,
   Param,
   Post,
   Req,
@@ -34,7 +33,7 @@ export class FavAchievementsController {
   @Get('/:appid')
   getUserFavAchievementsByGame(
     @Req() req: Request,
-    @Param('appid') appid: string,
+    @Param('appid') appid: number,
   ): Promise<FavAchievement[]> {
     const id = req.user['id'];
     return this.favAchievementsService.findByUserByGame(id, appid);

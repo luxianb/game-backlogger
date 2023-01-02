@@ -3,12 +3,11 @@ import { fetchRecentSteamGames } from "../apis/steam.apis";
 
 const KEY = "RECENT_GAMES";
 
-export const useRecentGames = (steamId) => {
+export const useRecentGames = () => {
   const { data, isLoading, error } = useQuery({
-    queryKey: [KEY, steamId],
+    queryKey: [KEY],
     queryFn: async () => {
-      if (!steamId) return [];
-      const data = await fetchRecentSteamGames(steamId);
+      const data = await fetchRecentSteamGames();
       return data.games;
     },
   });

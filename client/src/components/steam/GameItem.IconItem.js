@@ -90,7 +90,7 @@ const Image = styled.img`
 `;
 const Header = styled.p`
   font-size: 0.8rem;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.25rem;
 `;
 const Subheader = styled.p`
   font-size: 0.7rem;

@@ -2,7 +2,9 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { UsersModule } from 'src/users/users.module';
 import { SteamController } from './steam.controller';
+import { SteamGameController } from './steam.game.controller';
 import { SteamPlayerService } from './steam.playerService.service';
+import { SteamProfileController } from './steam.profile.controller';
 import { SteamService } from './steam.service';
 import { SteamNewsService } from './steam.steamNews.service';
 import { SteamUserService } from './steam.steamUser.service';
@@ -20,7 +22,7 @@ import { SteamUserStatsService } from './steam.userStats.service';
       }),
     }),
   ],
-  controllers: [SteamController],
+  controllers: [SteamController, SteamProfileController, SteamGameController],
   providers: [
     SteamService,
     SteamPlayerService,

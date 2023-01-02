@@ -3,10 +3,10 @@ import { fetchSteamProfile } from "../apis/steam.apis";
 
 const KEY = "STEAM_PROFILE";
 
-export const useSteamProfile = (steamId) => {
+export const useSteamProfile = () => {
   const { data, isLoading, error } = useQuery({
-    queryKey: [KEY, steamId],
-    queryFn: () => fetchSteamProfile(steamId),
+    queryKey: [KEY],
+    queryFn: fetchSteamProfile,
   });
 
   return [data, { isLoading, error }];

@@ -11,7 +11,7 @@ export class SteamUserStatsService {
   private readonly logger = new Logger(SteamUserStatsService.name);
   constructor(private readonly httpService: HttpService) {}
 
-  async getGlobalAchievementPercentagesForApp(gameid: string): Promise<any> {
+  async getGlobalAchievementPercentagesForApp(gameid: number): Promise<any> {
     const url = `https://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/`;
     const params = { gameid };
     const data = await lastValueFrom(
@@ -54,7 +54,7 @@ export class SteamUserStatsService {
     return data;
   }
 
-  async getNumberOfCurrentPlayers(appid: string): Promise<any> {
+  async getNumberOfCurrentPlayers(appid: number): Promise<any> {
     const url = `https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/`;
     const params = { appid };
     const data = await lastValueFrom(
@@ -70,7 +70,7 @@ export class SteamUserStatsService {
   }
   async getPlayerAchievements(
     steamid: string,
-    appid: string,
+    appid: number,
     l = 'english',
   ): Promise<any> {
     const url = `https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/`;
@@ -86,12 +86,12 @@ export class SteamUserStatsService {
     );
     return data;
   }
-  async getSchemaForGame(appid: string, l = 'english'): Promise<any> {
+  async getSchemaForGame(appid: number, l = 'english'): Promise<any> {
     const url = `https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/`;
     const params = { key, appid, l };
     const data = await lastValueFrom(
       this.httpService.get(url, { params }).pipe(
-        map((res) => res?.data),
+        map((res) => res?.data?.game),
         catchError((error: AxiosError) => {
           this.logger.error(error);
           throw 'Error fetching data';
@@ -100,7 +100,7 @@ export class SteamUserStatsService {
     );
     return data;
   }
-  async getUserStatsForGame(steamid: string, appid: string): Promise<any> {
+  async getUserStatsForGame(steamid: string, appid: number): Promise<any> {
     const url = `https://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v2/`;
     const params = { key, steamid, appid };
     const data = await lastValueFrom(

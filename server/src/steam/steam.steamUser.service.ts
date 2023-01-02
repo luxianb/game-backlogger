@@ -11,7 +11,7 @@ export class SteamUserService {
   constructor(private readonly httpService: HttpService) {}
 
   async getFriendList(steamid: string, relationship = 'friend'): Promise<any> {
-    const url = `https://partner.steam-api.com/ISteamUser/GetFriendList/v1/`;
+    const url = ` http://api.steampowered.com/ISteamUser/GetFriendList/v1/`;
     const params = { key, steamid, relationship };
     const data = await lastValueFrom(
       this.httpService.get(url, { params }).pipe(
@@ -25,7 +25,7 @@ export class SteamUserService {
     return data;
   }
   async getPlayerBans(steamid: string[] | string): Promise<any> {
-    const url = `https://partner.steam-api.com/ISteamUser/GetPlayerBans/v1/`;
+    const url = ` http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/`;
     const params = { key };
     if (typeof steamid === 'string') {
       params['steamid'] = steamid;
@@ -45,19 +45,19 @@ export class SteamUserService {
     );
     return data;
   }
-  async getPlayerSummaries(steamid: string[] | string): Promise<any> {
-    const url = `GetPlayerSummaries`;
+  async getPlayerSummaries(steamids: string[] | string): Promise<any> {
+    const url = ` http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/`;
     const params = { key };
-    if (typeof steamid === 'string') {
-      params['steamid'] = steamid;
+    if (typeof steamids === 'string') {
+      params['steamids'] = steamids;
     }
-    if (Array.isArray(steamid)) {
-      params['steamid'] = steamid.join();
+    if (Array.isArray(steamids)) {
+      params['steamids'] = steamids.join();
     }
 
     const data = await lastValueFrom(
       this.httpService.get(url, { params }).pipe(
-        map((res) => res?.data),
+        map((res) => res.data?.response?.players),
         catchError((error: AxiosError) => {
           this.logger.error(error);
           throw 'Error fetching data';

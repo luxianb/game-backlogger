@@ -6,7 +6,6 @@ import { Col, Page, Row } from "../../components/common";
 import { GameItem } from "../../components/steam/GameItem";
 import { SteamProfileDisplay } from "../../components/steam/SteamProfileDisplay";
 import { useRecentGames } from "../../utils/hooks/useRecentGames";
-import { useSteamId } from "../../utils/hooks/useSteamId";
 import { useSteamProfile, useUserGamelist } from "../../utils/hooks";
 import { useSearchParamsState } from "../../utils/hooks/useSearchParamsState";
 import {
@@ -18,12 +17,10 @@ dayjs.extend(advancedFormat);
 
 export const ProfilePage = () => {
   const [searchParams, setSearchParams] = useSearchParamsState({ filter: "" });
-  const [steamId] = useSteamId();
-  const [recentGames, { isLoading }] = useRecentGames(steamId);
+  const [recentGames, { isLoading }] = useRecentGames();
   const [favGames] = useFavGames();
-  console.log("🚀  favGames", favGames);
-  const [gameList] = useUserGamelist(steamId);
-  const [profile] = useSteamProfile(steamId);
+  const [gameList] = useUserGamelist();
+  const [profile] = useSteamProfile();
 
   const renderSteamProfile = () => {
     if (!profile) return null;
@@ -35,18 +32,41 @@ export const ProfilePage = () => {
   const renderRecentGames = () => {
     if (isLoading || !recentGames.length) return null;
 
-    const content = () =>
+    const renderGames = () =>
       recentGames.map((game) => (
         <GameItem
-          key={`rg-${game.appid}`}
           {...game}
-          favourited={favGames.some(
+          key={`rg-${game.appid}`}
+          favourited={favGames?.some(
             ({ gameid }) => parseInt(gameid) === game.appid
           )}
         />
       ));
 
-    return <Row style={{ overflowX: "auto", gap: ".5rem" }}>{content()}</Row>;
+    return (
+      <Row style={{ overflowX: "auto", gap: ".5rem" }}>{renderGames()}</Row>
+    );
+  };
+
+  const renderGameListFilters = () => {
+    return (
+      <Row style={{ gap: ".5rem" }}>
+        <input
+          value={searchParams.get("filter") || ""}
+          onChange={(e) => setSearchParams({ filter: e.target.value })}
+          placeholder="Search games"
+        />
+        <select
+          placeholder="Sort by"
+          value={searchParams.get("sorting") || ""}
+          onChange={(e) => setSearchParams({ sorting: e.target.value })}
+        >
+          <option value="name">Name</option>
+          <option value="most_played">Most played</option>
+          <option value="least_played">Least played</option>
+        </select>
+      </Row>
+    );
   };
 
   const renderGameList = () => {
@@ -65,9 +85,9 @@ export const ProfilePage = () => {
         .map((game) => {
           return (
             <GameItem
-              key={`gl-${game.appid}`}
               {...game}
-              favourited={favGames.some(
+              key={`gl-${game.appid}`}
+              favourited={favGames?.some(
                 ({ gameid }) => parseInt(gameid) === game.appid
               )}
             />
@@ -89,23 +109,9 @@ export const ProfilePage = () => {
       <Col style={{ gap: ".5rem" }}>
         <Row style={{ justifyContent: "space-between", marginRight: "1rem" }}>
           <h2>All Games</h2>
-          <Row style={{ gap: ".5rem" }}>
-            <input
-              value={searchParams.get("filter") || ""}
-              onChange={(e) => setSearchParams({ filter: e.target.value })}
-              placeholder="Search games"
-            />
-            <select
-              placeholder="Sort by"
-              value={searchParams.get("sorting") || ""}
-              onChange={(e) => setSearchParams({ sorting: e.target.value })}
-            >
-              <option value="name">Name</option>
-              <option value="most_played">Most played</option>
-              <option value="least_played">Least played</option>
-            </select>
-          </Row>
+          {renderGameListFilters()}
         </Row>
+
         {renderGameList()}
       </Col>
     </Page>

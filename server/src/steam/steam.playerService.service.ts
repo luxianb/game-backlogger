@@ -18,7 +18,7 @@ export class SteamPlayerService {
 
     const data = await lastValueFrom(
       this.httpService.get(url, { params }).pipe(
-        map((res) => res?.data),
+        map((res) => res.data?.response),
         catchError((error: AxiosError) => {
           this.logger.error(error);
           throw 'Error fetching data';
@@ -44,7 +44,7 @@ export class SteamPlayerService {
 
     const data = await lastValueFrom(
       this.httpService.get(url, { params }).pipe(
-        map((res) => res?.data),
+        map((res) => res?.data?.response),
         catchError((error: AxiosError) => {
           this.logger.error(error);
           throw 'Error fetching data';

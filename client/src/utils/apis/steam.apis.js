@@ -1,10 +1,10 @@
 import { instance } from "./api.tools";
 
-export const fetchSteamProfile = (steamId) =>
+export const fetchSteamProfile = () =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/profile/${steamId}`)
+        .get(`/api/steam/profile`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -12,11 +12,11 @@ export const fetchSteamProfile = (steamId) =>
       reject(error);
     }
   });
-export const fetchSteamUserGamelist = (steamId) =>
+export const fetchSteamUserGamelist = () =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/profile/${steamId}/gamelist`)
+        .get(`/api/steam/profile/gamelist`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -28,7 +28,7 @@ export const fetchSteamUserGameDetails = (steamId, appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/profile/${steamId}/gamelist/${appId}`)
+        .get(`/api/steam/profile/gamelist/${appId}`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -36,11 +36,11 @@ export const fetchSteamUserGameDetails = (steamId, appId) =>
       reject(error);
     }
   });
-export const fetchRecentSteamGames = (steamId) =>
+export const fetchRecentSteamGames = () =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/profile/${steamId}/recent`)
+        .get(`/api/steam/profile/recent`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -52,7 +52,7 @@ export const fetchSteamGameAchievements = (steamId, appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/profile/${steamId}/achievements/${appId}`)
+        .get(`/api/steam/profile/achievements/${appId}`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -64,7 +64,7 @@ export const getSchemaForGame = (appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/game/schema/${appId}`)
+        .get(`/api/steam/game/${appId}/schema`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -72,11 +72,11 @@ export const getSchemaForGame = (appId) =>
       reject(error);
     }
   });
-export const fetchSteamGameStat = (steamId, appId) =>
+export const fetchSteamGameStat = (appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/profile/${steamId}/stat/${appId}`)
+        .get(`/api/steam/profile/stat/${appId}`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -84,11 +84,11 @@ export const fetchSteamGameStat = (steamId, appId) =>
       reject(error);
     }
   });
-export const fetchSteamFriends = (steamId) =>
+export const fetchSteamFriends = () =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/profile/${steamId}/friends`)
+        .get(`/api/steam/profile/friends`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -100,7 +100,7 @@ export const fetchSteamGameGlobalAchievement = (appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/game/achievement/${appId}`)
+        .get(`/api/steam/game/${appId}/achievement`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -112,7 +112,7 @@ export const fetchSteamGameNews = (appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/game/news/${appId}`)
+        .get(`/api/steam/game/${appId}/news`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -125,7 +125,7 @@ export const fetchSteamGameInfo = (appId) =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/game/info/${appId}`)
+        .get(`/api/steam/game/${appId}/info`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {
@@ -137,7 +137,7 @@ export const fetchAllSteamGames = () =>
   new Promise(async (resolve, reject) => {
     try {
       const data = await instance
-        .get(`/api/steam/game/list`)
+        .get(`/api/steam/store/game`)
         .then((res) => res.data);
       resolve(data);
     } catch (error) {

@@ -161,7 +161,7 @@ export class SteamService {
     );
     return data;
   }
-  async getAppInfo(appids: string): Promise<any> {
+  async getAppInfo(appids: number): Promise<any> {
     const url = `http://store.steampowered.com/api/appdetails`;
     const params = { appids, l: 'english' };
     const data = await axios.get(url, { params }).then((res) => {

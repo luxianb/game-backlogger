@@ -14,7 +14,7 @@ export class FavAchievementsService {
 
   async find(
     user_id: number,
-    gameid: string,
+    gameid: number,
     achievementid: string,
   ): Promise<FavAchievement> {
     return await this.FavAchievements()
@@ -29,7 +29,7 @@ export class FavAchievementsService {
   }
   async findByUserByGame(
     user_id: number,
-    gameid: string,
+    gameid: number,
   ): Promise<FavAchievement[]> {
     return await this.FavAchievements().where({ user_id, gameid }).select('*');
   }
@@ -61,14 +61,14 @@ export class FavAchievementsService {
   async removeFavAchievements(
     id: number,
     user_id: number,
-    gameid: string,
+    gameid: number,
   ): Promise<{ success: boolean }> {
     await this.FavAchievements().where({ id }).delete();
     await this.checkAndRemoveGameList(gameid, user_id);
     return { success: true };
   }
 
-  async findOrCreateGamelist(gameid: string, user_id: number) {
+  async findOrCreateGamelist(gameid: number, user_id: number) {
     try {
       const gameList = await this.GameLists()
         .where({ gameid, user_id })
@@ -103,7 +103,7 @@ export class FavAchievementsService {
     }
   }
 
-  async checkAndRemoveGameList(gameid: string, user_id: number) {
+  async checkAndRemoveGameList(gameid: number, user_id: number) {
     try {
       const favAchievements = await this.FavAchievements()
         .where({ user_id, gameid })
