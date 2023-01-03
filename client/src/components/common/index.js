@@ -8,4 +8,5 @@ export * from "./Label";
 export * from "./Page";
 export * from "./Progressbar";
 export * from "./Row";
+export * from "./Spinner";
 export * from "./SteamButton";

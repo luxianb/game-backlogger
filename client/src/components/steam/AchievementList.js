@@ -37,7 +37,7 @@ export const AchievementList = ({
       .sort(getSorting)
       .map((item) => {
         const favourited = favAchievements.some(
-          (e) => e.achievementid === item.apiname
+          (e) => e.apiname === item.apiname
         );
         const prop = { ...item, appid, favourited };
         return <AchievementItem key={item.apiname} {...prop} />;

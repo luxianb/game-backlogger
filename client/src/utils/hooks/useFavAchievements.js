@@ -35,13 +35,10 @@ export const useToggleFavAchievement = (appid) => {
       queryClient.setQueryData(queryKey, (old) => {
         const achievementExists = old.find(
           (item) =>
-            item.gameid === variables.gameid &&
-            item.achievementid === variables.achievementid
+            item.appid === variables.appid && item.apiname === variables.apiname
         );
         if (achievementExists) {
-          return old.filter(
-            (item) => item.achievementid !== variables.achievementid
-          );
+          return old.filter((item) => item.apiname !== variables.apiname);
         } else {
           return [...old, optimisticData];
         }

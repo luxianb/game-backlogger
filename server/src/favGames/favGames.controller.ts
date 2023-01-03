@@ -30,7 +30,7 @@ export class FavGamesController {
   @UseGuards(JwtAuthGuard)
   @Get(':appid')
   async getUserFavGameById(
-    @Param('appid') appid: string,
+    @Param('appid') appid: number,
     @Req() req: Request,
   ): Promise<boolean> {
     const id = req.user['id'];
@@ -45,15 +45,15 @@ export class FavGamesController {
     @Body() data: FavGame,
   ): Promise<FavGame | { success: boolean }> {
     data.user_id = req.user['id'];
-    const { ...body } = data;
+    const { user_id, appid } = data;
 
     const favourited = await this.favGamesService.findByUserByAppid(
-      body.user_id,
-      body.gameid,
+      user_id,
+      appid,
     );
 
     if (!favourited) {
-      return await this.favGamesService.addFavGame(body);
+      return await this.favGamesService.addFavGame(data);
     } else {
       return await this.favGamesService.removeFavGame(favourited.id);
     }

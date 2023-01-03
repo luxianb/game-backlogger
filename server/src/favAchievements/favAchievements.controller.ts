@@ -46,20 +46,20 @@ export class FavAchievementsController {
     @Body() data: FavAchievement,
   ): Promise<FavAchievement | { success: boolean } | void> {
     data.user_id = req.user['id'];
-    const { ...body } = data;
+    const { user_id, appid, apiname } = data;
 
     const favourited = await this.favAchievementsService.find(
-      body.user_id,
-      body.gameid,
-      body.achievementid,
+      user_id,
+      appid,
+      apiname,
     );
     if (!favourited) {
-      return this.favAchievementsService.addFavAchievements(body);
+      return this.favAchievementsService.addFavAchievements(data);
     } else {
       return this.favAchievementsService.removeFavAchievements(
         favourited?.id,
-        body.user_id,
-        body.gameid,
+        user_id,
+        appid,
       );
     }
     return;

@@ -14,8 +14,8 @@ export class FavGamesService {
   async findByUser(user_id: number): Promise<FavGame[]> {
     return await this.FavGames().where({ user_id }).select('*');
   }
-  async findByUserByAppid(user_id: number, gameid: string): Promise<FavGame> {
-    return await this.FavGames().where({ user_id, gameid }).first();
+  async findByUserByAppid(user_id: number, appid: number): Promise<FavGame> {
+    return await this.FavGames().where({ user_id, appid }).first();
   }
   async addFavGame(body: FavGame): Promise<FavGame> {
     const id = await this.FavGames().insert(body);

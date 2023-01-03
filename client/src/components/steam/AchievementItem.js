@@ -28,8 +28,8 @@ export const AchievementItem = (props) => {
 
   const handleToggleFav = async () => {
     const postBody = {
-      gameid: parseInt(appid),
-      achievementid: apiname,
+      appid: parseInt(appid),
+      apiname: apiname,
       name: name,
       description: description,
       icon: icon,

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 
-import { Col, Page, Row } from "../../components/common";
+import { Col, Page, Row, Spinner } from "../../components/common";
 import { GameItem } from "../../components/steam/GameItem";
 import { SteamProfileDisplay } from "../../components/steam/SteamProfileDisplay";
 import { useRecentGames } from "../../utils/hooks/useRecentGames";
@@ -38,7 +38,7 @@ export const ProfilePage = () => {
           {...game}
           key={`rg-${game.appid}`}
           favourited={favGames?.some(
-            ({ gameid }) => parseInt(gameid) === game.appid
+            ({ appid }) => parseInt(appid) === game.appid
           )}
         />
       ));
@@ -88,7 +88,7 @@ export const ProfilePage = () => {
               {...game}
               key={`gl-${game.appid}`}
               favourited={favGames?.some(
-                ({ gameid }) => parseInt(gameid) === game.appid
+                ({ appid }) => parseInt(appid) === game.appid
               )}
             />
           );

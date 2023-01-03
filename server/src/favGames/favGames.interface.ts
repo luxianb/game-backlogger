@@ -1,6 +1,6 @@
 export interface FavGame {
   id: number;
-  gameid: string;
+  appid: number;
   user_id?: number;
   favourited?: boolean;
   createdAt: string;

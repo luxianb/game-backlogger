@@ -14,11 +14,11 @@ export class FavAchievementsService {
 
   async find(
     user_id: number,
-    gameid: number,
-    achievementid: string,
+    appid: number,
+    apiname: string,
   ): Promise<FavAchievement> {
     return await this.FavAchievements()
-      .where({ user_id, gameid, achievementid })
+      .where({ user_id, appid, apiname })
       .first();
   }
   async findAll(): Promise<FavAchievement[]> {
@@ -29,13 +29,13 @@ export class FavAchievementsService {
   }
   async findByUserByGame(
     user_id: number,
-    gameid: number,
+    appid: number,
   ): Promise<FavAchievement[]> {
-    return await this.FavAchievements().where({ user_id, gameid }).select('*');
+    return await this.FavAchievements().where({ user_id, appid }).select('*');
   }
   async addFavAchievements(body: FavAchievement): Promise<FavAchievement> {
     const id = await this.FavAchievements().insert(body);
-    await this.findOrCreateGamelist(body.gameid, body.user_id);
+    await this.findOrCreateGamelist(body.appid, body.user_id);
     return await this.FavAchievements().where({ id }).first();
   }
 
@@ -61,21 +61,19 @@ export class FavAchievementsService {
   async removeFavAchievements(
     id: number,
     user_id: number,
-    gameid: number,
+    appid: number,
   ): Promise<{ success: boolean }> {
     await this.FavAchievements().where({ id }).delete();
-    await this.checkAndRemoveGameList(gameid, user_id);
+    await this.checkAndRemoveGameList(appid, user_id);
     return { success: true };
   }
 
-  async findOrCreateGamelist(gameid: number, user_id: number) {
+  async findOrCreateGamelist(appid: number, user_id: number) {
     try {
-      const gameList = await this.GameLists()
-        .where({ gameid, user_id })
-        .first();
-      const { name } = await this.steamService.getAppInfo(gameid);
+      const gameList = await this.GameLists().where({ appid, user_id }).first();
+      const { name } = await this.steamService.getAppInfo(appid);
 
-      if (!gameList) await this.GameLists().insert({ user_id, gameid, name });
+      if (!gameList) await this.GameLists().insert({ user_id, appid, name });
       return { success: true };
     } catch (err) {
       Logger.error(FavAchievementsService.name, err);
@@ -103,14 +101,14 @@ export class FavAchievementsService {
     }
   }
 
-  async checkAndRemoveGameList(gameid: number, user_id: number) {
+  async checkAndRemoveGameList(appid: number, user_id: number) {
     try {
       const favAchievements = await this.FavAchievements()
-        .where({ user_id, gameid })
+        .where({ user_id, appid })
         .select('id');
 
       if (!favAchievements.length) {
-        await this.GameLists().where({ user_id, gameid }).delete();
+        await this.GameLists().where({ user_id, appid }).delete();
       }
 
       return { success: true };

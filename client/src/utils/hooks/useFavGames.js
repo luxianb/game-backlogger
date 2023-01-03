@@ -43,11 +43,9 @@ export const useToggleFavGames = (appid) => {
     } else {
       optimisticData = { id: uuidv4(), ...variables };
       queryClient.setQueryData(queryKey, (old) => {
-        console.log("🚀  queryKey", queryKey);
-        console.log("🚀  old", old);
-        const gameExists = old.find((game) => game.gameid === variables.gameid);
+        const gameExists = old.find((game) => game.appid === variables.appid);
         if (gameExists) {
-          return old.filter((item) => item.gameid !== variables.gameid);
+          return old.filter((item) => item.appid !== variables.appid);
         } else {
           return [...old, optimisticData];
         }

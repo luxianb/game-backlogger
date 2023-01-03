@@ -10,13 +10,13 @@ export const GameWatchlistPage = () => {
     if (!favGames) return;
 
     return favGames.map((game) => (
-      <WatchListItem key={game?.gameid} appid={game?.gameid} />
+      <WatchListItem key={game?.appid} appid={game?.appid} />
     ));
   };
 
   return (
     <Page>
-      <Title>Watchlist - Games</Title>
+      <Title>Game Watchlist</Title>
       <GameContainer>{renderGameList()}</GameContainer>
     </Page>
   );

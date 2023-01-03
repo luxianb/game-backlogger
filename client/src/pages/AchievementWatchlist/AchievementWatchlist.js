@@ -33,14 +33,14 @@ export const AchievementWatchlistPage = () => {
   };
 
   return (
-    <Page style={{ margin: "1rem", marginLeft: 0 }}>
+    <Page style={{ padding: "1rem", paddingLeft: 0 }}>
       {renderPageHeader()}
       {renderAchivementLists()}
     </Page>
   );
 };
 
-const Title = styled.h2``;
+const Title = styled.h1``;
 const ListContainer = styled(Row)`
   gap: 1rem;
 `;

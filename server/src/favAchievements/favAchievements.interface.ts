@@ -1,8 +1,8 @@
 export interface FavAchievement {
   id?: number;
-  gameid: number;
+  appid: number;
   gamename?: string;
-  achievementid: string;
+  apiname: string;
   name: string;
   description: string;
   icon: string;
@@ -15,7 +15,7 @@ export interface FavAchievement {
 
 export interface FavAchievementGameList {
   id?: number;
-  gameid: number;
+  appid: number;
   name: string;
   pos: number;
   user_id: number;

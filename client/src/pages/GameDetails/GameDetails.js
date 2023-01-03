@@ -37,6 +37,7 @@ export const GameDetailsPage = () => {
     achievements,
     { isLoading: isLoadingAchievements, error: achievementError },
   ] = useGameAchievements(appid);
+  console.log("achivements", achievements);
   const [favAchievements] = useFavAchievements(appid);
   const [favGame] = useFavGames(appid);
   const toggleGameFav = useToggleFavGames(appid);
@@ -52,22 +53,21 @@ export const GameDetailsPage = () => {
 
   function handleToggleFavGame() {
     const payload = {
-      gameid: params?.appid,
+      appid: params?.appid,
     };
     toggleGameFav.mutate(payload);
   }
 
   async function handleAddAllToWatchlist() {
     const achievementsToAdd = lockedAchievements.filter(
-      ({ apiname }) =>
-        !favAchievements.some(({ achievementid }) => achievementid === apiname)
+      ({ apiname }) => !favAchievements.some((item) => item.apiname === apiname)
     );
 
     if (achievementsToAdd.length) {
       for (const achievement of achievementsToAdd) {
         const postBody = {
-          gameid: parseInt(appid),
-          achievementid: achievement.apiname,
+          appid: parseInt(appid),
+          apiname: achievement.apiname,
           name: achievement.name,
           description: achievement.description,
           icon: achievement.icon,
@@ -79,8 +79,8 @@ export const GameDetailsPage = () => {
     } else if (achievementsToAdd.length === 0) {
       for (const achievement of lockedAchievements) {
         const postBody = {
-          gameid: parseInt(appid),
-          achievementid: achievement.apiname,
+          appid: parseInt(appid),
+          apiname: achievement.apiname,
           name: achievement.name,
           description: achievement.description,
           icon: achievement.icon,

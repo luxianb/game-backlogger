@@ -21,7 +21,7 @@ export const AchievementDisplayList = ({ appid, achievements = [] }) => {
       <Row>
         <FavToggle
           toggled={favourited}
-          onClick={() => toggleGameFav.mutate({ gameid: appid })}
+          onClick={() => toggleGameFav.mutate({ appid })}
           css={favToggleStyles}
         />
         <Link to={`/game/${appid}`}>
@@ -59,10 +59,10 @@ export const AchievementDisplayList = ({ appid, achievements = [] }) => {
 
     const renderList = () =>
       achievements.map((achievement, index, arr) => (
-        <React.Fragment key={achievement.achievementid}>
+        <React.Fragment key={achievement.apiname}>
           <AchievementItem
-            appid={achievement.gameid}
-            apiname={achievement.achievementid}
+            appid={achievement.appid}
+            apiname={achievement.apiname}
             favourited={true}
             css={itemStyles}
             {...achievement}

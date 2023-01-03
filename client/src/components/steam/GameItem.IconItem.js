@@ -55,7 +55,7 @@ export const GameItem = ({
       <FavToggle
         css={styles.favToggle}
         toggled={favourited}
-        onClick={() => toggleGameFav.mutate({ gameid: appid })}
+        onClick={() => toggleGameFav.mutate({ appid })}
       />
     </Row>
   );

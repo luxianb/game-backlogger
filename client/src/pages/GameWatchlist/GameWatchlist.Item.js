@@ -22,7 +22,7 @@ export const WatchListItem = ({ appid }) => {
         toggled={true}
         onClick={(e) => {
           e.stopPropagation();
-          toggleGameFav.mutate({ gameid: appid });
+          toggleGameFav.mutate({ appid });
         }}
       />
       <Link
