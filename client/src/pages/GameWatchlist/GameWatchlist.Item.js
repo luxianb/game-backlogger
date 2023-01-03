@@ -4,13 +4,12 @@ import { Alarm } from "akar-icons";
 import { BiAward } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { Col, Row, Progressbar } from "../../components/common";
-import { useGameAchievements, useUserGameDetails } from "../../utils/hooks";
+import { useGameAchievements } from "../../utils/hooks";
 import { useToggleFavGames } from "../../utils/hooks/useFavGames";
 import { getGameCapsuleMedium, getPlaytime } from "../../utils/steamTools";
 import { FavToggle } from "../GameDetails/GameDetails.FavToggle";
 
-export const WatchListItem = ({ appid }) => {
-  const [details] = useUserGameDetails(appid);
+export const WatchListItem = ({ appid, details }) => {
   const [achievements] = useGameAchievements(appid);
   const toggleGameFav = useToggleFavGames();
   const unlockedAchievements = achievements.filter((item) => item.achieved);
@@ -72,7 +71,7 @@ const styles = {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    z-index: 10;
+    z-index: 1;
   `,
 };
 
@@ -94,6 +93,6 @@ const Overlay = styled.div`
   box-shadow: 0 0 150px rgba(0, 0, 0, 0.25) inset;
 `;
 const GameCaspule = styled.img`
-  width: 400px;
+  width: 360px;
 `;
 const Subheader = styled.p``;

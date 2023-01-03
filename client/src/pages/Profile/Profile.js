@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 
-import { Col, Page, Row, Spinner } from "../../components/common";
+import { Col, Page, Row, Select } from "../../components/common";
 import { GameItem } from "../../components/steam/GameItem";
 import { SteamProfileDisplay } from "../../components/steam/SteamProfileDisplay";
 import { useRecentGames } from "../../utils/hooks/useRecentGames";
@@ -13,6 +13,7 @@ import {
   getListSortingFunction,
 } from "./Profile.helpers";
 import { useFavGames } from "../../utils/hooks/useFavGames";
+import { SearchInput } from "../../components/common/SearchInput";
 dayjs.extend(advancedFormat);
 
 export const ProfilePage = () => {
@@ -49,22 +50,27 @@ export const ProfilePage = () => {
   };
 
   const renderGameListFilters = () => {
+    const sortingOptions = [
+      { value: "name", label: "Name" },
+      { value: "most_played", label: "Most played" },
+      { value: "least_played", label: "Least played" },
+    ];
+
     return (
       <Row style={{ gap: ".5rem" }}>
-        <input
+        <SearchInput
           value={searchParams.get("filter") || ""}
           onChange={(e) => setSearchParams({ filter: e.target.value })}
           placeholder="Search games"
         />
-        <select
+        <Select
           placeholder="Sort by"
-          value={searchParams.get("sorting") || ""}
-          onChange={(e) => setSearchParams({ sorting: e.target.value })}
-        >
-          <option value="name">Name</option>
-          <option value="most_played">Most played</option>
-          <option value="least_played">Least played</option>
-        </select>
+          defaultValue={sortingOptions.find(
+            ({ value }) => value === searchParams.get("sorting")
+          )}
+          options={sortingOptions}
+          onChange={(e) => setSearchParams({ sorting: e.value })}
+        />
       </Row>
     );
   };

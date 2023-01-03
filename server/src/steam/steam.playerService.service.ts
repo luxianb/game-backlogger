@@ -32,10 +32,17 @@ export class SteamPlayerService {
     steamid,
     include_appinfo = true,
     include_played_free_games = true,
+    include_extended_appinfo = true,
     appids_filter = [],
   }: getOwnedGamesParams): Promise<any> {
     const url = `https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/`;
-    const params = { key, steamid, include_appinfo, include_played_free_games };
+    const params = {
+      key,
+      steamid,
+      include_appinfo,
+      include_played_free_games,
+      include_extended_appinfo,
+    };
     if (appids_filter.length) {
       for (let i = 0; i < appids_filter.length; i++) {
         params[`appids_filter[${i}]`] = appids_filter[i];

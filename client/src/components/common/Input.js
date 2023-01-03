@@ -3,11 +3,18 @@ import styled from "@emotion/styled";
 import { hexToRGBA } from "../../utils/tools";
 
 export const Input = styled.input`
-  padding: 0.25rem;
+  padding: 0.5rem;
   min-width: unset;
   border-radius: 0.25rem;
-  border: 1px solid ${`#b0bec5`};
+  border: none;
+  /* border: 1px solid ${hexToRGBA(`#263238`, 0)}; */
+  background-color: ${hexToRGBA(`#263238`, 1)};
   display: block;
+  color: ${hexToRGBA(`#ffffff`, 0.7)};
+  font-size: 0.9rem;
+  :focus-visible {
+    outline: 1px solid #1e88e5;
+  }
   ${getErrorStyle}
 `;
 

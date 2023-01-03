@@ -10,11 +10,26 @@ import { useGameAchievements } from "../../utils/hooks";
 import { FavToggle } from "../../pages/GameDetails/GameDetails.FavToggle";
 import { useFavGames, useToggleFavGames } from "../../utils/hooks/useFavGames";
 import React from "react";
+import { useToggleFavAchievementListItem } from "../../utils/hooks/useFavAchievementLists";
 
-export const AchievementDisplayList = ({ appid, achievements = [] }) => {
+export const AchievementDisplayList = ({ appid, achievements = [], style }) => {
   const [source] = useGameAchievements(appid);
   const [favourited] = useFavGames(appid);
   const toggleGameFav = useToggleFavGames(appid);
+  const toggleAchievementFav = useToggleFavAchievementListItem();
+
+  function handleFavAchievementToggle(achievement) {
+    const payload = {
+      appid: parseInt(appid),
+      apiname: achievement.apiname,
+      name: achievement.name,
+      description: achievement.description,
+      icon: achievement.icon,
+      icongray: achievement.icongray,
+      achieved: achievement.achieved,
+    };
+    toggleAchievementFav.mutate(payload);
+  }
 
   const renderHeroImage = () => {
     return (
@@ -46,10 +61,16 @@ export const AchievementDisplayList = ({ appid, achievements = [] }) => {
         <Header>
           Tracking {length} / {total}
         </Header>
-        <ProgressContainer>
-          <Progressbar current={unlocked} total={total} style={{ width: 40 }} />
-          {percentage}%
-        </ProgressContainer>
+        {Boolean(percentage) && (
+          <ProgressContainer>
+            <Progressbar
+              current={unlocked}
+              total={total}
+              style={{ width: 40 }}
+            />
+            {percentage}%
+          </ProgressContainer>
+        )}
       </HeaderContainer>
     );
   };
@@ -65,6 +86,7 @@ export const AchievementDisplayList = ({ appid, achievements = [] }) => {
             apiname={achievement.apiname}
             favourited={true}
             css={itemStyles}
+            onFavToggle={() => handleFavAchievementToggle(achievement)}
             {...achievement}
           />
           {index !== arr.length - 1 && <Separator />}
@@ -75,7 +97,7 @@ export const AchievementDisplayList = ({ appid, achievements = [] }) => {
   };
 
   return (
-    <Container>
+    <Container style={style}>
       {renderHeroImage()}
       {renderHeader()}
       {renderAchievementList()}
@@ -90,6 +112,8 @@ const Container = styled(Col)`
   overflow: hidden;
   /* border: 1px solid grey; */
   width: 400px;
+  min-height: 600px;
+  height: fit-content;
 `;
 const HeaderContainer = styled(Row)`
   margin: 1rem;
@@ -110,6 +134,7 @@ const ListContainer = styled(Col)`
   padding: 0.5rem 0;
   gap: 0.5rem;
   border-radius: 8px;
+  overflow-y: auto;
 `;
 const Separator = styled.div`
   height: 1px;

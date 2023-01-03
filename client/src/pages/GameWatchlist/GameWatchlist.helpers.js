@@ -1,14 +1,3 @@
-export const groupAchievementsByAppid = (achievements) => {
-  if (!Array.isArray(achievements)) return {};
-
-  return achievements.reduce((prev, curr) => {
-    const { appid } = curr;
-    if (!prev[appid]) prev[appid] = [];
-    prev[appid].push(curr);
-    return prev;
-  }, {});
-};
-
 export function getListFilterFunction(filter) {
   return (game) => {
     if (!filter) return true;
@@ -25,8 +14,8 @@ export function getListSortingFunction(sorting) {
       return (a, b) => a.playtime_forever - b.playtime_forever;
     case "name":
       return (a, b) => {
-        const _a = a.name;
-        const _b = b.name;
+        const _a = a.sort_as ?? a.name;
+        const _b = b.sort_as ?? b.name;
         if (_a.toLowerCase() > _b.toLowerCase()) return 1;
         if (_a.toLowerCase() < _b.toLowerCase()) return -1;
         return 0;

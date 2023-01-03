@@ -12,6 +12,17 @@ export const getFavAchievements = (appid) =>
       reject(err);
     }
   });
+export const getFavAchievementsGameLists = () =>
+  new Promise(async (resolve, reject) => {
+    try {
+      let url = "/api/favAchievements/list";
+      const data = await axios.get(url).then((res) => res.data);
+
+      resolve(data);
+    } catch (err) {
+      reject(err);
+    }
+  });
 
 export const toggleAchievementFav = (body) =>
   new Promise(async (resolve, reject) => {

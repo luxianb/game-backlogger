@@ -5,8 +5,9 @@ import { useGameSchema } from "./useGameSchema";
 const KEY = "GAME_ACHIEVEMENT";
 
 export const useGameAchievements = (appid) => {
-  const [schema, { isLoading: isLoadingSchema, error: schemaError }] =
-    useGameSchema(appid);
+  //prettier-ignore
+  const [schema, { isLoading: isLoadingSchema, error: schemaError }] = useGameSchema(appid);
+
   const {
     data: achievements,
     isLoading,

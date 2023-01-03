@@ -23,6 +23,7 @@ export const AchievementItem = (props) => {
     unlocktime,
     favourited,
     hidden,
+    onFavToggle,
     ...rest
   } = props;
 
@@ -68,7 +69,10 @@ export const AchievementItem = (props) => {
       </Col>
 
       {!achieved && (
-        <Clickable onClick={handleToggleFav} className="achievement-fav-toggle">
+        <Clickable
+          onClick={onFavToggle || handleToggleFav}
+          className="achievement-fav-toggle"
+        >
           {!favourited ? <BsBookmark /> : <BsBookmarkFill />}
         </Clickable>
       )}

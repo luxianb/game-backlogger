@@ -37,7 +37,6 @@ export const GameDetailsPage = () => {
     achievements,
     { isLoading: isLoadingAchievements, error: achievementError },
   ] = useGameAchievements(appid);
-  console.log("achivements", achievements);
   const [favAchievements] = useFavAchievements(appid);
   const [favGame] = useFavGames(appid);
   const toggleGameFav = useToggleFavGames(appid);
@@ -64,7 +63,8 @@ export const GameDetailsPage = () => {
     );
 
     if (achievementsToAdd.length) {
-      for (const achievement of achievementsToAdd) {
+      for (let i = 0; i < achievementsToAdd.length; i++) {
+        const achievement = achievementsToAdd[i];
         const postBody = {
           appid: parseInt(appid),
           apiname: achievement.apiname,
@@ -74,10 +74,15 @@ export const GameDetailsPage = () => {
           icongray: achievement.icongray,
           achieved: achievement.achieved,
         };
-        toggleAchievementFav.mutate(postBody);
+        if (i === 0) {
+          await toggleAchievementFav.mutateAsync(postBody);
+        } else {
+          toggleAchievementFav.mutate(postBody);
+        }
       }
     } else if (achievementsToAdd.length === 0) {
-      for (const achievement of lockedAchievements) {
+      for (let i = 0; i < lockedAchievements.length; i++) {
+        const achievement = lockedAchievements[i];
         const postBody = {
           appid: parseInt(appid),
           apiname: achievement.apiname,
@@ -87,7 +92,11 @@ export const GameDetailsPage = () => {
           icongray: achievement.icongray,
           achieved: achievement.achieved,
         };
-        toggleAchievementFav.mutate(postBody);
+        if (i === 0) {
+          await toggleAchievementFav.mutateAsync(postBody);
+        } else {
+          toggleAchievementFav.mutate(postBody);
+        }
       }
     }
   }

@@ -1,19 +1,26 @@
 import styled from "@emotion/styled";
+import { useEffect } from "react";
 import { Navigation } from "../../layouts/navbar/Navigation";
 import { useElementSize } from "../../utils/hooks/useElementSize";
 
-export const Page = ({ children, style }) => {
+export const Page = ({ children, style, getParentSize }) => {
   const [navRef, navWidth] = useElementSize("width");
-  const [pageRef, pageWidth] = useElementSize("width");
+  const [pageRef, pageSize] = useElementSize("all");
+
+  useEffect(() => {
+    if (!getParentSize) return;
+    getParentSize(pageSize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageSize, getParentSize]);
 
   const getStyle = () => {
     const styles = { ...style };
-    if (!navWidth || !pageWidth) {
+    if (!navWidth || !pageSize?.width) {
       styles.maxWidth = "unset";
       return styles;
     }
 
-    styles.maxWidth = pageWidth - navWidth;
+    styles.maxWidth = pageSize?.width - navWidth;
     return styles;
   };
 

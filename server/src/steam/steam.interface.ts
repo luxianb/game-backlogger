@@ -22,6 +22,7 @@ export interface getOwnedGamesParams {
   steamid: string;
   include_appinfo?: boolean;
   include_played_free_games?: boolean;
+  include_extended_appinfo?: boolean;
   appids_filter?: Array<number>;
 }
 export interface getNewsForAppParams {

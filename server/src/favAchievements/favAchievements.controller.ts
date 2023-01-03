@@ -28,6 +28,12 @@ export class FavAchievementsController {
     const id = req.user['id'];
     return this.favAchievementsService.findByUser(id);
   }
+  @UseGuards(JwtAuthGuard)
+  @Get('/list')
+  getUserFavAchievementLists(@Req() req: Request): Promise<FavAchievement[]> {
+    const id = req.user['id'];
+    return this.favAchievementsService.findAllUserAchievementGamelist(id);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('/:appid')

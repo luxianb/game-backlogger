@@ -1,7 +1,10 @@
-import { flatten, Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SteamService } from 'src/steam/steam.service';
 import { KNEX_CONNECTION } from '../knex';
-import { FavAchievement } from './favAchievements.interface';
+import {
+  FavAchievement,
+  FavAchievementGameList,
+} from './favAchievements.interface';
 
 @Injectable()
 export class FavAchievementsService {
@@ -66,6 +69,18 @@ export class FavAchievementsService {
     await this.FavAchievements().where({ id }).delete();
     await this.checkAndRemoveGameList(appid, user_id);
     return { success: true };
+  }
+
+  async findAllUserAchievementGamelist(user_id: number) {
+    const data = await this.GameLists().where({ user_id }).select('*');
+    const achievements = await this.FavAchievements()
+      .where({ user_id })
+      .select('*');
+
+    return data?.map((list: FavAchievementGameList) => ({
+      ...list,
+      achievements: achievements.filter(({ appid }) => appid === list.appid),
+    }));
   }
 
   async findOrCreateGamelist(appid: number, user_id: number) {

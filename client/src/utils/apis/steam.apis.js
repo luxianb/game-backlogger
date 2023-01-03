@@ -36,6 +36,18 @@ export const fetchSteamUserGameDetails = (appId) =>
       reject(error);
     }
   });
+export const fetchMultipleGameDetails = (appids_filter) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const data = await instance
+        .post(`/api/steam/profile/gamelist`, { appids_filter })
+        .then((res) => res.data);
+      resolve(data);
+    } catch (error) {
+      console.error(error);
+      reject(error);
+    }
+  });
 export const fetchRecentSteamGames = () =>
   new Promise(async (resolve, reject) => {
     try {
