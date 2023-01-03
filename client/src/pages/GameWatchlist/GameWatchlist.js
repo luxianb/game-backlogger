@@ -10,13 +10,15 @@ import {
 import { WatchListItem } from "./GameWatchlist.Item";
 
 export const GameWatchlistPage = () => {
-  const [favGames] = useDetailedFavGames();
+  const [favGames, favGameState] = useDetailedFavGames();
   const [searchParams, setSearchParams] = useSearchParamsState({
     filter: "",
     sorting: "position",
   });
 
   const renderHeader = () => {
+    if (favGameState.isLoading || favGameState.error) return;
+
     const sortOptions = [
       { value: "position", label: "Position" },
       { value: "name", label: "Name" },
@@ -26,7 +28,7 @@ export const GameWatchlistPage = () => {
 
     return (
       <HeaderContainer>
-        <Title>Game Watchlist</Title>
+        <Title>{`Game Watchlist (${favGames?.length})`}</Title>
 
         <ControlContainer>
           <SearchInput
@@ -48,7 +50,7 @@ export const GameWatchlistPage = () => {
   };
 
   const renderGameList = () => {
-    if (!favGames) return;
+    if (favGameState.isLoading || favGameState.error || !favGames) return;
 
     const listFilterFunction = getListFilterFunction(
       searchParams.get("filter")

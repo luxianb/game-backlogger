@@ -1,6 +1,5 @@
 import { useElementSize } from "../../utils/hooks";
 import { Page, Row, Select } from "../../components/common";
-import { DragDropContext } from "react-beautiful-dnd";
 import {
   getListFilterFunction,
   getListSortingFunction,
@@ -22,6 +21,8 @@ export const AchievementWatchlistPage = () => {
   });
 
   const renderPageHeader = () => {
+    if (achievementListsState.isLoading || achievementListsState.error)
+      return null;
     const sortOptions = [
       { value: "position", label: "Position" },
       { value: "name", label: "Name" },
@@ -34,7 +35,7 @@ export const AchievementWatchlistPage = () => {
 
     return (
       <HeaderContainer ref={headerRef}>
-        <Title>Achievement Watchlist</Title>
+        <Title>{`Achievement Watchlist (${achievementLists?.length})`}</Title>
 
         <ControlContainer>
           <SearchInput

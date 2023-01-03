@@ -17,10 +17,13 @@ export const useElementSize = (direction) => {
   const [size, setSize] = useState(null);
   // const field = getField(direction);
 
-  useEffect(() => {
-    calculateSize();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref?.current?.offsetHeight, ref?.current?.offsetWidth]);
+  useEffect(
+    () => {
+      calculateSize();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
+    // , [ref?.current?.offsetHeight, ref?.current?.offsetWidth]
+  );
 
   useEffect(() => {
     window.addEventListener("resize", calculateSize);
@@ -28,7 +31,7 @@ export const useElementSize = (direction) => {
       window.removeEventListener("resize", calculateSize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ref.current]);
 
   const calculateSize = () => {
     if (!ref.current) return;
