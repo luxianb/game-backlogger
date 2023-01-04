@@ -1,9 +1,16 @@
 require("dotenv").config();
 const Koa = require("koa");
+const Router = require("@koa/router");
+const db = require("./lib/knex");
+
 const app = new Koa();
+const router = new Router({ prefix: "/api" });
 
 // constants
 const port = process.env.PORT ?? 3002;
+
+//contexts
+app.context.db = db;
 
 // logger
 app.use(async (ctx, next) => {
@@ -20,10 +27,17 @@ app.use(async (ctx, next) => {
   ctx.set("X-Response-Time", `${ms}ms`);
 });
 
-// response
+// routes
+router.get("/", (ctx, next) => {
+  ctx.body = "Hello World too";
+});
 
+// response
+app.use(router.routes()).use(router.allowedMethods());
 app.use(async (ctx) => {
   ctx.body = "Hello World";
 });
 
-app.listen(3000);
+app.listen(port, () => {
+  console.log(`Application is running on http://localhost:${port}`);
+});
