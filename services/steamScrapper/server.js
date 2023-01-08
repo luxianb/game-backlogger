@@ -5,6 +5,7 @@ const db = require("./lib/knex");
 
 const app = new Koa();
 const router = new Router({ prefix: "/api" });
+const scrapperService = require("./services/SteamScrapper.service");
 
 // constants
 const port = process.env.PORT ?? 3002;
@@ -27,9 +28,11 @@ app.use(async (ctx, next) => {
   ctx.set("X-Response-Time", `${ms}ms`);
 });
 
+scrapperService.initScrape();
+
 // routes
 router.get("/", (ctx, next) => {
-  ctx.body = "Hello World too";
+  ctx.body = "Hello World";
 });
 
 // response

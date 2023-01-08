@@ -9,6 +9,7 @@ import { SteamService } from './steam.service';
 import { SteamNewsService } from './steam.steamNews.service';
 import { SteamUserService } from './steam.steamUser.service';
 import { SteamWebAPIUtilService } from './steam.steamWebAPIUtil.service';
+import { SteamStoreController } from './steam.store.controller';
 import { SteamStoreService } from './steam.store.service';
 import { SteamUserStatsService } from './steam.userStats.service';
 
@@ -22,7 +23,12 @@ import { SteamUserStatsService } from './steam.userStats.service';
       }),
     }),
   ],
-  controllers: [SteamController, SteamProfileController, SteamGameController],
+  controllers: [
+    SteamController,
+    SteamProfileController,
+    SteamGameController,
+    SteamStoreController,
+  ],
   providers: [
     SteamService,
     SteamPlayerService,

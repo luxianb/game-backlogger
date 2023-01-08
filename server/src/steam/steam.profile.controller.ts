@@ -67,7 +67,7 @@ export class SteamProfileController {
   @Get('/recent')
   async getRecentlyPlayedGames(@Req() req: Request) {
     const steamid = req.user['steamId'];
-    this.logger.log(steamid);
+    // this.logger.log(steamid);
     const data = await this.steamPlayerService.getRecentlyPlayedGames(steamid);
     return data;
   }
@@ -97,7 +97,6 @@ export class SteamProfileController {
       steamid,
       appId,
     );
-    // console.log('🚀  SteamProfileController  data', data);
     return data?.playerstats?.achievements;
   }
 

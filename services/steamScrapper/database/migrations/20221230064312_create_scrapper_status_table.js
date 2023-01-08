@@ -4,9 +4,10 @@
  */
 exports.up = function (knex) {
   return knex.schema.createTable("status", (table) => {
-    table.increments("id").notNullable();
+    table.increments("id");
     table.string("type").notNullable();
-    table.integer("last_scrapped");
+    table.integer("last_appid");
+    table.integer("last_completed_date");
   });
 };
 
